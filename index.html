@@ -1,1 +1,402 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>퀴즈 던전 (Quiz Dungeon)</title>
+  <style>
+    /* Reset & CSS Variable Options */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
 
+    :root {
+      --primary-color: #ffd700;
+      --bg-dark: #12141d;
+      --panel-bg: rgba(22, 27, 46, 0.85);
+      --panel-border: #3b4368;
+      --text-main: #ffffff;
+      --exp-color: #2ECC71;
+      --hp-color: #E74C3C;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Segoe UI', AppleSDGothicNeo-Medium, sans-serif;
+      background-color: #000;
+      color: var(--text-main);
+    }
+
+    /* Game Main Canvas Container (Aspect Ratio Guard & Landscape Orientation) */
+    .game-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(180deg, #1f253d 0%, #0d101d 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 20px;
+    }
+
+    /* Top Navigation Bar */
+    .top-bar {
+      width: 100%;
+      height: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    /* Left: Profile Badge & Level/EXP */
+    .profile-card {
+      display: flex;
+      align-items: center;
+      background: var(--panel-bg);
+      border: 2px solid var(--panel-border);
+      border-radius: 30px;
+      padding: 6px 16px 6px 8px;
+      gap: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .profile-card:hover {
+      transform: scale(1.03);
+      border-color: var(--primary-color);
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #4a5568;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      border: 2px solid var(--primary-color);
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .user-name-lvl {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .level-badge {
+      background: var(--primary-color);
+      color: #000;
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-weight: 800;
+    }
+
+    .exp-bar-bg {
+      width: 120px;
+      height: 8px;
+      background: #2a314d;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .exp-bar-fill {
+      width: 45%;
+      height: 100%;
+      background: linear-gradient(90deg, #27ae60, #2ecc71);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    /* Right: Settings Icon Button */
+    .icon-btn {
+      width: 46px;
+      height: 46px;
+      background: var(--panel-bg);
+      border: 2px solid var(--panel-border);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      transition: all 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: #2a3356;
+      border-color: var(--primary-color);
+      transform: scale(1.05);
+    }
+
+    /* Center Section: Main Stage Character & Dungeon Start */
+    .center-stage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -45%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .character-avatar {
+      width: 130px;
+      height: 130px;
+      background: radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(0,0,0,0) 70%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6));
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .btn-dungeon-start {
+      padding: 14px 40px;
+      font-size: 20px;
+      font-weight: 800;
+      color: #1a1000;
+      background: linear-gradient(180deg, #ffe866 0%, #ffa800 100%);
+      border: none;
+      border-radius: 30px;
+      box-shadow: 0 6px 0 #b37400, 0 10px 20px rgba(0,0,0,0.5);
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.1s;
+    }
+
+    .btn-dungeon-start:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #b37400, 0 5px 10px rgba(0,0,0,0.5);
+    }
+
+    /* Modals (Profile & Settings) */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 100;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      width: 380px;
+      max-width: 90%;
+      background: #1a1f36;
+      border: 2px solid #3b4368;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #2d3558;
+      padding-bottom: 10px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: #8a94b8;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 14px;
+    }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+    }
+
+    .btn-logout {
+      margin-top: 10px;
+      padding: 10px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Device Orientation Notice (Portrait Guard) */
+    .orientation-notice {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #0d101d;
+      z-index: 999;
+      color: #fff;
+      text-align: center;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    @media (orientation: portrait) {
+      .orientation-notice {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Game Main Screen -->
+  <div class="game-container">
+    
+    <!-- Top Navigation -->
+    <div class="top-bar">
+      <!-- Left: Profile Button -->
+      <div class="profile-card" onclick="openModal('profileModal')">
+        <div class="avatar">🧙‍♂️</div>
+        <div class="user-info">
+          <div class="user-name-lvl">
+            <span>용사님</span>
+            <span class="level-badge" id="userLevel">Lv.1</span>
+          </div>
+          <div class="exp-bar-bg">
+            <div class="exp-bar-fill" id="expFill" style="width: 20%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Settings Button -->
+      <button class="icon-btn" onclick="openModal('settingsModal')">⚙️</button>
+    </div>
+
+    <!-- Center Stage -->
+    <div class="center-stage">
+      <div class="character-avatar">🧙‍♂️</div>
+      <button class="btn-dungeon-start" onclick="startDungeon()">던전 탐험 시작</button>
+    </div>
+
+  </div>
+
+  <!-- Profile Modal -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">프로필 정보</div>
+        <button class="close-btn" onclick="closeModal('profileModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>닉네임:</strong> 용사님</p>
+        <p><strong>레벨:</strong> <span id="modalLevel">Lv.1</span></p>
+        <p><strong>경험치:</strong> <span id="modalExp">20 / 100</span></p>
+        <p><strong>보유 무기:</strong> 기본 목검 🗡️</p>
+        <p><strong>보유 방어구:</strong> 천 옷 🛡️</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">환경 설정</div>
+        <button class="close-btn" onclick="closeModal('settingsModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-item">
+          <span>배경음악 (BGM)</span>
+          <input type="checkbox" checked>
+        </div>
+        <div class="setting-item">
+          <span>효과음 (SFX)</span>
+          <input type="checkbox" checked>
+        </div>
+        <div class="setting-item">
+          <span>알림 설정</span>
+          <input type="checkbox">
+        </div>
+        <button class="btn-logout" onclick="alert('로그아웃 되었습니다.')">로그아웃</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Portrait Orientation Warning -->
+  <div class="orientation-notice">
+    <h2>📱 화면을 가로로 돌려주세요!</h2>
+    <p style="margin-top: 10px; color: #8a94b8;">'퀴즈 던전'은 가로 모드에 최적화되어 있습니다.</p>
+  </div>
+
+  <script>
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    function startDungeon() {
+      alert('던전에 입장합니다! 퀴즈 모듈을 준비하세요.');
+    }
+  </script>
+</body>
+</html>

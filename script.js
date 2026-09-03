@@ -1,11 +1,8 @@
 /* ============================================================
    던전 오브 앎 — 2단계: Supabase 연동
-   회원가입 / 로그인 / 로그아웃 + 플레이어 데이터(레벨,EXP 등)를
-   Supabase(Postgres)에 저장하고 불러옵니다.
    ============================================================ */
 import { supabase } from "./supabase-config.js";
 
-// ---- 새 계정 생성 시 기본 스탯 ------------------------------------------
 function defaultPlayerData(id, name){
   return {
     id,
@@ -22,7 +19,6 @@ function defaultPlayerData(id, name){
   };
 }
 
-// ---- 현재 로그인한 플레이어의 데이터 (players 테이블에서 불러온 값) ----
 let currentPlayer = null;
 
 const els = {
@@ -61,7 +57,6 @@ const els = {
   modalAccuracy: document.getElementById('modal-accuracy'),
 };
 
-// ---- 로그인 / 회원가입 모드 전환 ----------------------------------------
 let mode = 'login'; // 'login' | 'signup'
 
 function setMode(nextMode){
@@ -89,7 +84,6 @@ function clearError(){
   els.loginError.textContent = '';
 }
 
-// Supabase 에러 메시지를 한국어 안내로 변환
 function translateAuthError(error){
   const msg = error && error.message ? error.message : '';
   if (msg.includes('already registered') || msg.includes('already been registered')) {
@@ -105,12 +99,12 @@ function translateAuthError(error){
     return '이메일 형식이 올바르지 않아요.';
   }
   if (msg.includes('Email not confirmed')) {
-    return '이메일 인증이 필요해요. 받은 메일함의 인증 링크를 확인해주세요.';
+    return '이메일 인증이 필요합니다. Supabase 설정에서 Confirm Email을 꺼주세요.';
   }
-  return '문제가 발생했어요. 잠시 후 다시 시도해주세요.';
+  return error.message || '문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
 }
 
-// ---- 폼 제출: 로그인 또는 회원가입 --------------------------------------
+// 폼 제출 handler
 els.loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   clearError();
@@ -137,30 +131,30 @@ els.loginForm.addEventListener('submit', async (e) => {
       if (error) throw error;
 
       if (data.session){
-        // 이메일 인증이 꺼져 있어 가입 즉시 로그인된 경우: 플레이어 행 생성
         const { error: insertError } = await supabase
           .from('players')
           .insert(defaultPlayerData(data.user.id, nickname));
-        if (insertError) throw insertError;
-        // onAuthStateChange가 이어서 홈 화면 진입을 처리합니다.
+        if (insertError) {
+          console.error("DB Insert 오류:", insertError);
+          throw insertError;
+        }
       } else {
-        showError('가입 완료! 이메일함의 인증 링크를 확인한 뒤 로그인해주세요.');
-        setMode('login');
+        showError('이메일 인증이 필요합니다. Supabase -> Authentication -> Confirm Email 설정을 비활성화 해주세요.');
       }
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password: pw });
       if (error) throw error;
-      // onAuthStateChange가 이어서 홈 화면 진입을 처리합니다.
     }
   } catch (error){
+    console.error("인증 처리 중 에러 발생:", error);
     showError(translateAuthError(error));
-    setMode(mode); // 버튼 텍스트 원복
   } finally {
     els.btnSubmit.disabled = false;
+    els.btnSubmit.textContent = mode === 'signup' ? '모험가 등록' : '입장하기';
   }
 });
 
-// ---- 로그인 상태 변화 감지: 앱 진입점 ------------------------------------
+// 로그인 감지
 supabase.auth.onAuthStateChange(async (_event, session) => {
   if (session && session.user){
     await loadPlayerData(session.user);
@@ -176,7 +170,6 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
   }
 });
 
-// ---- players 테이블에서 플레이어 데이터 불러오기 -------------------------
 async function loadPlayerData(user){
   const { data, error } = await supabase
     .from('players')
@@ -185,21 +178,19 @@ async function loadPlayerData(user){
     .maybeSingle();
 
   if (error){
-    console.error(error);
+    console.error("DB 읽기 오류:", error);
     return;
   }
 
   if (data){
     currentPlayer = data;
   } else {
-    // 행이 없는 예외 상황(예: 가입 중 중단) 대비 기본값 생성
     const fallback = defaultPlayerData(user.id, user.user_metadata?.display_name || '모험가');
     await supabase.from('players').insert(fallback);
     currentPlayer = fallback;
   }
 }
 
-// ---- HUD 렌더링 ----------------------------------------------------------
 function renderHud(){
   if (!currentPlayer) return;
   els.hudName.textContent = currentPlayer.name;
@@ -221,7 +212,6 @@ function renderProfileModal(){
     : `${Math.round((currentPlayer.kills / (currentPlayer.runs * 10)) * 100)}%`;
 }
 
-// ---- 모달 열기/닫기 --------------------------------------------------------
 function openModal(modalEl){ modalEl.classList.add('active'); }
 function closeModal(modalEl){ modalEl.classList.remove('active'); }
 
@@ -231,7 +221,6 @@ els.btnProfile.addEventListener('click', () => {
 });
 els.btnSettings.addEventListener('click', () => openModal(els.modalSettings));
 els.btnDungeon.addEventListener('click', () => {
-  // TODO(3단계): 과목별 던전 선택 화면으로 이동
   openModal(els.modalDungeonStub);
 });
 
@@ -246,12 +235,9 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
   });
 });
 
-// ---- 설정: 로그아웃 --------------------------------------------------------
 els.btnLogout.addEventListener('click', async () => {
   closeModal(els.modalSettings);
   await supabase.auth.signOut();
-  // onAuthStateChange가 로그인 화면 전환을 처리합니다.
 });
 
-// ---- 초기 모드 세팅 ---------------------------------------------------------
 setMode('login');

@@ -1,203 +1,211 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>던전 오브 앎 — Dungeon of Knowledge</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gowun+Dodum&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>던전 오브 앎 — Dungeon of Knowledge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gowun+Dodum&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- 세로모드 안내 오버레이 -->
+  <div id="rotate-overlay" class="rotate-overlay">
+    <div class="rotate-icon">📱</div>
+    <p class="rotate-text">화면을 가로로 돌려주세요</p>
+    <p class="rotate-sub">던전은 가로 방향에서만 열립니다</p>
+  </div>
 
-<!-- 세로모드 안내 오버레이 -->
-<div id="rotate-overlay" class="rotate-overlay">
-  <div class="rotate-icon">📱</div>
-  <p class="rotate-text">화면을 가로로 돌려주세요</p>
-  <p class="rotate-sub">던전은 가로 방향에서만 열립니다</p>
-</div>
+  <!-- 게임 프레임: 항상 가로 비율 유지 -->
+  <div class="game-frame">
+    <!-- ===================== 로그인 화면 ===================== -->
+    <section id="screen-login" class="screen screen-login active">
+      <div class="login-bg-glow"></div>
+      <div class="login-card rpg-panel">
+        <h1 class="game-title">던전 오브 앎</h1>
+        <p class="game-subtitle">퀴즈를 풀고, 몬스터를 처치하고, 지식을 레벨업하라</p>
 
-<!-- 게임 프레임: 항상 가로 비율 유지 -->
-<div class="game-frame">
+        <form id="login-form" class="login-form">
+          <!-- 회원가입 전용: 닉네임 입력란 -->
+          <label class="field" id="field-nickname" hidden>
+            <span class="field-label">모험가 닉네임</span>
+            <input type="text" id="login-nickname" class="field-input" placeholder="던전에서 사용할 이름" autocomplete="nickname">
+          </label>
 
-  <!-- ===================== 로그인 화면 ===================== -->
-  <section id="screen-login" class="screen screen-login active">
-    <div class="login-bg-glow"></div>
-    <div class="login-card rpg-panel">
-      <h1 class="game-title">던전 오브 앎</h1>
-      <p class="game-subtitle">퀴즈를 풀고, 몬스터를 처치하고, 지식을 레벨업하라</p>
+          <label class="field">
+            <span class="field-label">이메일</span>
+            <input type="email" id="login-email" class="field-input" placeholder="example@email.com" autocomplete="email" required>
+          </label>
 
-      <form id="login-form" class="login-form">
-        <label class="field">
-          <span class="field-label">모험가 ID</span>
-          <input type="text" id="login-id" class="field-input" placeholder="이메일 또는 아이디" autocomplete="username">
-        </label>
-        <label class="field">
-          <span class="field-label">비밀의 주문 (비밀번호)</span>
-          <input type="password" id="login-pw" class="field-input" placeholder="••••••••" autocomplete="current-password">
-        </label>
-        <button type="submit" class="btn btn-primary">입장하기</button>
-      </form>
+          <label class="field">
+            <span class="field-label">비밀의 주문 (비밀번호)</span>
+            <input type="password" id="login-pw" class="field-input" placeholder="6자 이상 입력" autocomplete="current-password" required>
+          </label>
 
-      <button id="btn-signup" class="btn btn-ghost">계정이 없다면? 새 모험가 등록</button>
-      <p class="login-note">※ 1단계 데모 화면입니다. 실제 로그인/저장은 2단계(Firebase 연동)에서 연결돼요.</p>
-    </div>
-  </section>
+          <!-- 에러 메시지 표시 영역 -->
+          <p id="login-error" style="color: var(--accent-blood); font-size: 11px; text-align: center; min-height: 14px; margin-top: 2px;"></p>
 
-  <!-- ===================== 홈 화면 ===================== -->
-  <section id="screen-home" class="screen screen-home">
+          <button type="submit" id="btn-submit" class="btn btn-primary">입장하기</button>
+        </form>
 
-    <!-- 상단 바 -->
-    <header class="topbar">
-      <button id="btn-profile" class="profile-chip rpg-panel-sm" aria-label="프로필 열기">
-        <span class="avatar">🧙</span>
-        <span class="profile-info">
-          <span class="profile-name" id="hud-name">모험가</span>
-          <span class="level-row">
-            <span class="level-badge" id="hud-level">Lv.1</span>
-            <span class="exp-bar-track">
-              <span class="exp-bar-fill" id="hud-exp-fill" style="width:0%"></span>
+        <button id="btn-toggle-mode" class="btn btn-ghost">계정이 없다면? 새 모험가 등록</button>
+        <p class="login-note">※ Supabase Authentication 연동 화면입니다.</p>
+      </div>
+    </section>
+
+    <!-- ===================== 홈 화면 ===================== -->
+    <section id="screen-home" class="screen screen-home">
+      <!-- 상단 바 -->
+      <header class="topbar">
+        <button id="btn-profile" class="profile-chip rpg-panel-sm" aria-label="프로필 열기">
+          <span class="avatar">🧙</span>
+          <span class="profile-info">
+            <span class="profile-name" id="hud-name">모험가</span>
+            <span class="level-row">
+              <span class="level-badge" id="hud-level">Lv.1</span>
+              <span class="exp-bar-track">
+                <span class="exp-bar-fill" id="hud-exp-fill" style="width:0%"></span>
+              </span>
             </span>
           </span>
-        </span>
-      </button>
+        </button>
 
-      <button id="btn-settings" class="icon-btn rpg-panel-sm" aria-label="설정 열기">⚙</button>
-    </header>
+        <button id="btn-settings" class="icon-btn rpg-panel-sm" aria-label="설정 열기">⚙</button>
+      </header>
 
-    <!-- 중앙 무대: 플레이어 캐릭터 -->
-    <main class="stage">
-      <div class="stage-floor"></div>
-      <div class="stage-particles" aria-hidden="true"></div>
+      <!-- 중앙 무대: 플레이어 캐릭터 -->
+      <main class="stage">
+        <div class="stage-floor"></div>
+        <div class="stage-particles" aria-hidden="true"></div>
 
-      <div class="player-wrap">
-        <div class="player-sprite">🧙‍♂️</div>
-        <div class="player-shadow"></div>
-        <div class="equip-row">
-          <span class="equip-slot" title="무기">⚔</span>
-          <span class="equip-slot" title="방어구">🛡</span>
+        <div class="player-wrap">
+          <div class="player-sprite">🧙‍♂️</div>
+          <div class="player-shadow"></div>
+          <div class="equip-row">
+            <span class="equip-slot" title="무기">⚔</span>
+            <span class="equip-slot" title="방어구">🛡</span>
+          </div>
+        </div>
+
+        <div class="hp-hud rpg-panel-sm">
+          <span class="hp-label">HP</span>
+          <span class="hp-bar-track">
+            <span class="hp-bar-fill" id="hud-hp-fill" style="width:100%"></span>
+          </span>
+          <span class="hp-value" id="hud-hp-value">100/100</span>
+        </div>
+      </main>
+
+      <!-- 하단: 던전 입구 -->
+      <footer class="bottombar">
+        <button id="btn-dungeon" class="btn btn-dungeon rpg-panel">
+          <span class="dungeon-icon">🚪</span>
+          <span class="dungeon-text">던전 입구</span>
+        </button>
+      </footer>
+    </section>
+  </div><!-- /game-frame -->
+
+  <!-- ===================== 프로필 모달 ===================== -->
+  <div id="modal-profile" class="modal-overlay">
+    <div class="modal-panel rpg-panel">
+      <button class="modal-close" data-close>✕</button>
+      <h2 class="modal-title">모험가 수첩</h2>
+
+      <div class="profile-summary">
+        <span class="avatar avatar-lg">🧙</span>
+        <div>
+          <p class="profile-summary-name" id="modal-name">모험가</p>
+          <p class="profile-summary-level" id="modal-level">Lv.1 · 견습 학도</p>
         </div>
       </div>
 
-      <div class="hp-hud rpg-panel-sm">
-        <span class="hp-label">HP</span>
-        <span class="hp-bar-track">
-          <span class="hp-bar-fill" id="hud-hp-fill" style="width:100%"></span>
-        </span>
-        <span class="hp-value" id="hud-hp-value">100/100</span>
+      <div class="stat-grid">
+        <div class="stat-cell">
+          <span class="stat-cell-label">경험치</span>
+          <span class="stat-cell-value" id="modal-exp">0 / 100 EXP</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-cell-label">처치한 몬스터</span>
+          <span class="stat-cell-value" id="modal-kills">0마리</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-cell-label">탐험 횟수</span>
+          <span class="stat-cell-value" id="modal-runs">0회</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-cell-label">정답률</span>
+          <span class="stat-cell-value" id="modal-accuracy">—</span>
+        </div>
       </div>
-    </main>
 
-    <!-- 하단: 던전 입구 -->
-    <footer class="bottombar">
-      <button id="btn-dungeon" class="btn btn-dungeon rpg-panel">
-        <span class="dungeon-icon">🚪</span>
-        <span class="dungeon-text">던전 입구</span>
-      </button>
-    </footer>
-  </section>
-
-</div><!-- /game-frame -->
-
-<!-- ===================== 프로필 모달 ===================== -->
-<div id="modal-profile" class="modal-overlay">
-  <div class="modal-panel rpg-panel">
-    <button class="modal-close" data-close>✕</button>
-    <h2 class="modal-title">모험가 수첩</h2>
-
-    <div class="profile-summary">
-      <span class="avatar avatar-lg">🧙</span>
-      <div>
-        <p class="profile-summary-name" id="modal-name">모험가</p>
-        <p class="profile-summary-level" id="modal-level">Lv.1 · 견습 학도</p>
+      <h3 class="modal-subtitle">장비</h3>
+      <div class="equip-list">
+        <div class="equip-item">
+          <span class="equip-item-icon">⚔</span>
+          <span class="equip-item-name">낡은 단검</span>
+          <span class="equip-item-desc">정답 시 추가 피해 없음</span>
+        </div>
+        <div class="equip-item">
+          <span class="equip-item-icon">🛡</span>
+          <span class="equip-item-name">천 방어구</span>
+          <span class="equip-item-desc">오답 피해 감소 없음</span>
+        </div>
       </div>
+
+      <h3 class="modal-subtitle">친구 (준비 중)</h3>
+      <p class="modal-placeholder">친구와 함께 던전을 탐험하는 기능은 곧 추가됩니다.</p>
     </div>
-
-    <div class="stat-grid">
-      <div class="stat-cell">
-        <span class="stat-cell-label">경험치</span>
-        <span class="stat-cell-value" id="modal-exp">0 / 100 EXP</span>
-      </div>
-      <div class="stat-cell">
-        <span class="stat-cell-label">처치한 몬스터</span>
-        <span class="stat-cell-value" id="modal-kills">0마리</span>
-      </div>
-      <div class="stat-cell">
-        <span class="stat-cell-label">탐험 횟수</span>
-        <span class="stat-cell-value" id="modal-runs">0회</span>
-      </div>
-      <div class="stat-cell">
-        <span class="stat-cell-label">정답률</span>
-        <span class="stat-cell-value" id="modal-accuracy">—</span>
-      </div>
-    </div>
-
-    <h3 class="modal-subtitle">장비</h3>
-    <div class="equip-list">
-      <div class="equip-item">
-        <span class="equip-item-icon">⚔</span>
-        <span class="equip-item-name">낡은 단검</span>
-        <span class="equip-item-desc">정답 시 추가 피해 없음</span>
-      </div>
-      <div class="equip-item">
-        <span class="equip-item-icon">🛡</span>
-        <span class="equip-item-name">천 방어구</span>
-        <span class="equip-item-desc">오답 피해 감소 없음</span>
-      </div>
-    </div>
-
-    <h3 class="modal-subtitle">친구 (준비 중)</h3>
-    <p class="modal-placeholder">친구와 함께 던전을 탐험하는 기능은 곧 추가됩니다.</p>
   </div>
-</div>
 
-<!-- ===================== 설정 모달 ===================== -->
-<div id="modal-settings" class="modal-overlay">
-  <div class="modal-panel modal-panel-sm rpg-panel">
-    <button class="modal-close" data-close>✕</button>
-    <h2 class="modal-title">설정</h2>
+  <!-- ===================== 설정 모달 ===================== -->
+  <div id="modal-settings" class="modal-overlay">
+    <div class="modal-panel modal-panel-sm rpg-panel">
+      <button class="modal-close" data-close>✕</button>
+      <h2 class="modal-title">설정</h2>
 
-    <div class="settings-list">
-      <div class="settings-row">
-        <span class="settings-label">🔔 알림</span>
-        <label class="toggle">
-          <input type="checkbox" id="toggle-notify" checked>
-          <span class="toggle-track"><span class="toggle-thumb"></span></span>
-        </label>
+      <div class="settings-list">
+        <div class="settings-row">
+          <span class="settings-label">🔔 알림</span>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-notify" checked>
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">🔊 효과음</span>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-sfx" checked>
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">🎵 배경음악</span>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-bgm">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          </label>
+        </div>
       </div>
-      <div class="settings-row">
-        <span class="settings-label">🔊 효과음</span>
-        <label class="toggle">
-          <input type="checkbox" id="toggle-sfx" checked>
-          <span class="toggle-track"><span class="toggle-thumb"></span></span>
-        </label>
-      </div>
-      <div class="settings-row">
-        <span class="settings-label">🎵 배경음악</span>
-        <label class="toggle">
-          <input type="checkbox" id="toggle-bgm">
-          <span class="toggle-track"><span class="toggle-thumb"></span></span>
-        </label>
-      </div>
+
+      <button id="btn-logout" class="btn btn-danger">로그아웃</button>
     </div>
-
-    <button id="btn-logout" class="btn btn-danger">로그아웃</button>
   </div>
-</div>
 
-<!-- ===================== 던전 진입 안내 (3단계 예고) ===================== -->
-<div id="modal-dungeon-stub" class="modal-overlay">
-  <div class="modal-panel modal-panel-sm rpg-panel">
-    <button class="modal-close" data-close>✕</button>
-    <h2 class="modal-title">🚪 던전 입구</h2>
-    <p class="modal-placeholder">
-      과목별 던전 선택과 퀴즈 전투는 3단계에서 구현될 예정이에요.<br>
-      지금은 화면 레이아웃만 확인하는 단계입니다.
-    </p>
+  <!-- ===================== 던전 진입 안내 (3단계 예고) ===================== -->
+  <div id="modal-dungeon-stub" class="modal-overlay">
+    <div class="modal-panel modal-panel-sm rpg-panel">
+      <button class="modal-close" data-close>✕</button>
+      <h2 class="modal-title">🚪 던전 입구</h2>
+      <p class="modal-placeholder">
+        과목별 던전 선택과 퀴즈 전투는 3단계에서 구현될 예정이에요.<br>
+        지금은 회원가입 및 데이터베이스 연동 확인 단계입니다.
+      </p>
+    </div>
   </div>
-</div>
 
-<script src="script.js"></script>
+  <!-- type="module" 필수! -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>

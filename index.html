@@ -17,46 +17,45 @@
     <p class="rotate-sub">던전은 가로 방향에서만 열립니다</p>
   </div>
 
-  <!-- 게임 프레임: 항상 가로 비율 유지 -->
+  <!-- 게임 프레임: 가로 비율 유지 -->
   <div class="game-frame">
     <!-- ===================== 로그인 화면 ===================== -->
     <section id="screen-login" class="screen screen-login active">
       <div class="login-bg-glow"></div>
-      <div class="login-card rpg-panel">
+      <div class="login-card-clean">
         <h1 class="game-title">던전 오브 앎</h1>
         <p class="game-subtitle">퀴즈를 풀고, 몬스터를 처치하고, 지식을 레벨업하라</p>
 
         <form id="login-form" class="login-form">
-          <!-- 회원가입 전용: 닉네임 입력란 -->
-          <label class="field" id="field-nickname" hidden>
-            <span class="field-label">모험가 닉네임</span>
+          <!-- 회원가입 전용: 닉네임 -->
+          <div class="field" id="field-nickname" hidden>
+            <label class="field-label" for="login-nickname">모험가 닉네임</label>
             <input type="text" id="login-nickname" class="field-input" placeholder="던전에서 사용할 이름" autocomplete="nickname">
-          </label>
+          </div>
 
-          <label class="field">
-            <span class="field-label">이메일</span>
+          <div class="field">
+            <label class="field-label" for="login-email">이메일</label>
             <input type="email" id="login-email" class="field-input" placeholder="example@email.com" autocomplete="email" required>
-          </label>
+          </div>
 
-          <label class="field">
-            <span class="field-label">비밀의 주문 (비밀번호)</span>
+          <div class="field">
+            <label class="field-label" for="login-pw">비밀의 주문 (비밀번호)</label>
             <input type="password" id="login-pw" class="field-input" placeholder="6자 이상 입력" autocomplete="current-password" required>
-          </label>
+          </div>
 
-          <!-- 에러 메시지 표시 영역 -->
-          <p id="login-error" style="color: var(--accent-blood); font-size: 11px; text-align: center; min-height: 14px; margin-top: 2px;"></p>
+          <!-- 에러 및 안내 메시지 -->
+          <p id="login-error" style="color: #ff6b6b; font-size: 12px; text-align: center; min-height: 16px; margin-top: 2px; word-break: keep-all;"></p>
 
           <button type="submit" id="btn-submit" class="btn btn-primary">입장하기</button>
         </form>
 
         <button id="btn-toggle-mode" class="btn btn-ghost">계정이 없다면? 새 모험가 등록</button>
-        <p class="login-note">※ Supabase Authentication 연동 화면입니다.</p>
+        <p class="login-note">※ Supabase 데이터베이스 연동 계정</p>
       </div>
     </section>
 
     <!-- ===================== 홈 화면 ===================== -->
     <section id="screen-home" class="screen screen-home">
-      <!-- 상단 바 -->
       <header class="topbar">
         <button id="btn-profile" class="profile-chip rpg-panel-sm" aria-label="프로필 열기">
           <span class="avatar">🧙</span>
@@ -74,7 +73,6 @@
         <button id="btn-settings" class="icon-btn rpg-panel-sm" aria-label="설정 열기">⚙</button>
       </header>
 
-      <!-- 중앙 무대: 플레이어 캐릭터 -->
       <main class="stage">
         <div class="stage-floor"></div>
         <div class="stage-particles" aria-hidden="true"></div>
@@ -97,7 +95,6 @@
         </div>
       </main>
 
-      <!-- 하단: 던전 입구 -->
       <footer class="bottombar">
         <button id="btn-dungeon" class="btn btn-dungeon rpg-panel">
           <span class="dungeon-icon">🚪</span>
@@ -105,9 +102,9 @@
         </button>
       </footer>
     </section>
-  </div><!-- /game-frame -->
+  </div>
 
-  <!-- ===================== 프로필 모달 ===================== -->
+  <!-- 프로필 모달 -->
   <div id="modal-profile" class="modal-overlay">
     <div class="modal-panel rpg-panel">
       <button class="modal-close" data-close>✕</button>
@@ -159,7 +156,7 @@
     </div>
   </div>
 
-  <!-- ===================== 설정 모달 ===================== -->
+  <!-- 설정 모달 -->
   <div id="modal-settings" class="modal-overlay">
     <div class="modal-panel modal-panel-sm rpg-panel">
       <button class="modal-close" data-close>✕</button>
@@ -193,7 +190,7 @@
     </div>
   </div>
 
-  <!-- ===================== 던전 진입 안내 (3단계 예고) ===================== -->
+  <!-- 던전 진입 안내 -->
   <div id="modal-dungeon-stub" class="modal-overlay">
     <div class="modal-panel modal-panel-sm rpg-panel">
       <button class="modal-close" data-close>✕</button>
@@ -205,7 +202,6 @@
     </div>
   </div>
 
-  <!-- type="module" 필수! -->
   <script type="module" src="script.js"></script>
 </body>
 </html>

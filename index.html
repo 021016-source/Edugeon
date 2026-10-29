@@ -2,48 +2,150 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>던전 오브 앎</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="app">
-    <!-- 인증 섹션 (로그인 / 회원가입) -->
-    <section id="auth-section" class="auth-container">
-      <div class="auth-box">
-        <h2>던전 오브 앎</h2>
-        <p class="auth-subtitle">지식과 모험이 기다리는 곳</p>
+  <div id="game-container">
+    <!-- 1. 인증 화면 -->
+    <section id="auth-section" class="screen active">
+      <div class="auth-card">
+        <h1 class="game-title">던전 오브 앎</h1>
+        <p class="game-subtitle">지식과 탐험의 가로모드 RPG</p>
 
-        <!-- 에러 및 안내 메시지 출력 영역 -->
-        <div id="auth-error" class="auth-error-msg" style="display: none;"></div>
+        <div id="auth-error" class="error-msg" style="display: none;"></div>
 
-        <form id="login-form">
-          <div class="input-group">
-            <label for="login-email">이메일</label>
-            <input type="email" id="login-email" placeholder="example@email.com" required />
+        <form id="auth-form">
+          <div class="field">
+            <label for="input-email">이메일</label>
+            <input type="email" id="input-email" placeholder="example@email.com" required />
           </div>
 
-          <div class="input-group">
-            <label for="login-pw">비밀번호</label>
-            <input type="password" id="login-pw" placeholder="비밀번호 입력" required />
+          <div class="field">
+            <label for="input-pw">비밀번호</label>
+            <input type="password" id="input-pw" placeholder="비밀번호 입력" required />
           </div>
 
-          <!-- 회원가입 모드일 때만 활성화되는 닉네임 입력란 -->
-          <div class="input-group" id="nickname-group" style="display: none;">
-            <label for="login-nickname">모험가 이름 (닉네임)</label>
-            <input type="text" id="login-nickname" placeholder="용감한 모험가" />
+          <div class="field" id="nickname-field" style="display: none;">
+            <label for="input-nickname">모험가 이름</label>
+            <input type="text" id="input-nickname" placeholder="닉네임 입력" />
           </div>
 
-          <button type="submit" id="btn-submit" class="btn-primary">입장하기</button>
+          <button type="submit" id="btn-auth-submit" class="btn primary-btn">입장하기</button>
         </form>
 
-        <div class="auth-toggle">
-          <button type="button" id="btn-toggle-mode" class="btn-link">새 모험가 등록하기</button>
-        </div>
+        <button type="button" id="btn-toggle-auth" class="btn link-btn">새 모험가 등록하기</button>
       </div>
     </section>
 
-    <!-- 게임 홈 화면 섹션 -->
-    <section id="home-section" class="home-container" style="display: none;">
-      <header class="game-header">
-        <h1>
+    <!-- 2. 게임 메인 화면 (가로 레이아웃) -->
+    <section id="game-section" class="screen">
+      <!-- 상단 바 -->
+      <header class="top-bar">
+        <div class="player-summary">
+          <span class="p-name" id="ui-name">모험가</span>
+          <span class="p-level">Lv.<span id="ui-level">1</span></span>
+        </div>
+        <div class="header-actions">
+          <button id="btn-ranking" class="btn small-btn">🏆 랭킹</button>
+          <button id="btn-logout" class="btn small-btn danger">로그아웃</button>
+        </div>
+      </header>
+
+      <!-- 게임 본문 (좌: 스테이지 & 전투 / 우: 캐릭터 스탯) -->
+      <main class="game-content">
+        <!-- 전투 화면 영역 -->
+        <div class="battle-panel">
+          <div class="stage-info">
+            <span id="ui-stage">STAGE 1</span>
+          </div>
+
+          <div class="battle-arena">
+            <div class="character-sprite player-sprite">🗡️</div>
+            <div class="vs-badge">VS</div>
+            <div class="character-sprite monster-sprite" id="ui-monster-icon">👾</div>
+          </div>
+
+          <!-- 몬스터 체력바 -->
+          <div class="bar-container monster-bar">
+            <div class="bar-label">
+              <span id="ui-monster-name">슬라임</span>
+              <span id="ui-monster-hp-text">50 / 50</span>
+            </div>
+            <div class="bar-bg">
+              <div id="ui-monster-hp-fill" class="bar-fill hp-fill" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <!-- 전투 로그 및 컨트롤 -->
+          <div class="log-box" id="ui-log">던전에 입장했습니다!</div>
+
+          <div class="action-buttons">
+            <button id="btn-attack" class="btn action-btn">⚔️ 공격하기</button>
+            <button id="btn-rest" class="btn action-btn">🩹 휴식하기 (HP 회복)</button>
+          </div>
+        </div>
+
+        <!-- 플레이어 상태 패널 -->
+        <div class="status-panel">
+          <h3>모험가 상태</h3>
+
+          <div class="bar-container">
+            <div class="bar-label">
+              <span>체력 (HP)</span>
+              <span id="ui-hp-text">100 / 100</span>
+            </div>
+            <div class="bar-bg">
+              <div id="ui-hp-fill" class="bar-fill hp-fill" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <div class="bar-container">
+            <div class="bar-label">
+              <span>경험치 (EXP)</span>
+              <span id="ui-exp-text">0 / 100</span>
+            </div>
+            <div class="bar-bg">
+              <div id="ui-exp-fill" class="bar-fill exp-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="stat-list">
+            <div class="stat-item">공격력: <strong id="ui-atk">10</strong></div>
+            <div class="stat-item">처치한 몬스터: <strong id="ui-kills">0</strong> 마리</div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <!-- 3. 랭킹 모달 (레이어) -->
+    <div id="ranking-modal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>🏆 명예의 전당 (Top 10)</h2>
+          <button id="btn-close-ranking" class="btn-close">&times;</button>
+        </div>
+        <div class="ranking-body">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>순위</th>
+                <th>이름</th>
+                <th>레벨</th>
+                <th>스테이지</th>
+                <th>처치 수</th>
+              </tr>
+            </thead>
+            <tbody id="ui-ranking-list">
+              <!-- JS로 dynamic 생성 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

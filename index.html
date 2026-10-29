@@ -12,7 +12,7 @@
     <section id="auth-section" class="screen active">
       <div class="auth-card">
         <h1 class="game-title">던전 오브 앎</h1>
-        <p class="game-subtitle">지식과 탐험의 가로모드 RPG</p>
+        <p class="game-subtitle">지식으로 몬스터를 해치우는 과학 RPG</p>
 
         <div id="auth-error" class="error-msg" style="display: none;"></div>
 
@@ -39,23 +39,22 @@
       </div>
     </section>
 
-    <!-- 2. 게임 메인 화면 (가로 레이아웃) -->
+    <!-- 2. 게임 메인 화면 (가로 중앙 정렬) -->
     <section id="game-section" class="screen">
-      <!-- 상단 바 -->
       <header class="top-bar">
         <div class="player-summary">
           <span class="p-name" id="ui-name">모험가</span>
           <span class="p-level">Lv.<span id="ui-level">1</span></span>
         </div>
         <div class="header-actions">
+          <button id="btn-add-quiz" class="btn small-btn highlight">➕ 퀴즈 등록</button>
           <button id="btn-ranking" class="btn small-btn">🏆 랭킹</button>
           <button id="btn-logout" class="btn small-btn danger">로그아웃</button>
         </div>
       </header>
 
-      <!-- 게임 본문 (좌: 스테이지 & 전투 / 우: 캐릭터 스탯) -->
       <main class="game-content">
-        <!-- 전투 화면 영역 -->
+        <!-- 좌측 전투 및 퀴즈 전투 영역 -->
         <div class="battle-panel">
           <div class="stage-info">
             <span id="ui-stage">STAGE 1</span>
@@ -78,16 +77,21 @@
             </div>
           </div>
 
-          <!-- 전투 로그 및 컨트롤 -->
-          <div class="log-box" id="ui-log">던전에 입장했습니다!</div>
-
-          <div class="action-buttons">
-            <button id="btn-attack" class="btn action-btn">⚔️ 공격하기</button>
-            <button id="btn-rest" class="btn action-btn">🩹 휴식하기 (HP 회복)</button>
+          <!-- 과학 암기 퀴즈 인터페이스 -->
+          <div class="quiz-container">
+            <div class="quiz-question" id="ui-quiz-question">질문을 불러오는 중...</div>
+            <div class="quiz-options">
+              <button class="quiz-btn" data-opt="1" id="opt-1">1. -</button>
+              <button class="quiz-btn" data-opt="2" id="opt-2">2. -</button>
+              <button class="quiz-btn" data-opt="3" id="opt-3">3. -</button>
+              <button class="quiz-btn" data-opt="4" id="opt-4">4. -</button>
+            </div>
           </div>
+
+          <div class="log-box" id="ui-log">과학 퀴즈를 맞혀 몬스터를 공격하세요!</div>
         </div>
 
-        <!-- 플레이어 상태 패널 -->
+        <!-- 우측 플레이어 상태 패널 -->
         <div class="status-panel">
           <h3>모험가 상태</h3>
 
@@ -115,11 +119,38 @@
             <div class="stat-item">공격력: <strong id="ui-atk">10</strong></div>
             <div class="stat-item">처치한 몬스터: <strong id="ui-kills">0</strong> 마리</div>
           </div>
+
+          <button id="btn-rest" class="btn action-btn full-btn">🩹 휴식하기 (HP 회복)</button>
         </div>
       </main>
     </section>
 
-    <!-- 3. 랭킹 모달 (레이어) -->
+    <!-- 3. 과학 퀴즈 직접 등록 모달 -->
+    <div id="quiz-modal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>과학 퀴즈 직접 등록</h2>
+          <button id="btn-close-quiz-modal" class="btn-close">&times;</button>
+        </div>
+        <form id="quiz-form" class="modal-form">
+          <div class="field">
+            <label>문제 내용</label>
+            <input type="text" id="quiz-input-q" placeholder="예: 원소기호 O는 무엇인가?" required />
+          </div>
+          <div class="field"><input type="text" id="quiz-input-1" placeholder="보기 1" required /></div>
+          <div class="field"><input type="text" id="quiz-input-2" placeholder="보기 2" required /></div>
+          <div class="field"><input type="text" id="quiz-input-3" placeholder="보기 3" required /></div>
+          <div class="field"><input type="text" id="quiz-input-4" placeholder="보기 4" required /></div>
+          <div class="field">
+            <label>정답 번호 (1~4)</label>
+            <input type="number" id="quiz-input-ans" min="1" max="4" placeholder="정답 번호 입력 (1~4)" required />
+          </div>
+          <button type="submit" class="btn primary-btn">퀴즈 DB에 추가</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 4. 랭킹 모달 -->
     <div id="ranking-modal" class="modal" style="display: none;">
       <div class="modal-content">
         <div class="modal-header">
@@ -137,9 +168,7 @@
                 <th>처치 수</th>
               </tr>
             </thead>
-            <tbody id="ui-ranking-list">
-              <!-- JS로 dynamic 생성 -->
-            </tbody>
+            <tbody id="ui-ranking-list"></tbody>
           </table>
         </div>
       </div>

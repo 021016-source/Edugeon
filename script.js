@@ -1,14 +1,17 @@
 import { supabase } from './supabase-config.js';
 
-// DOM 요소 가져오기 Helper
+// DOM 요소를 안전하게 가져오는 헬퍼 함수
 const getEl = (id) => document.getElementById(id);
 
 let mode = 'login'; // 'login' 또는 'signup'
 
-// 에러 메시지 출력
+// 에러 및 메시지 출력
 function showError(msg, isInfo = false) {
   const authError = getEl('auth-error');
-  if (!authError) return;
+  if (!authError) {
+    alert(msg);
+    return;
+  }
   authError.textContent = msg;
   authError.style.display = 'block';
   authError.style.color = isInfo ? '#4caf50' : '#ff4d4d';
@@ -25,7 +28,7 @@ function clearError() {
 function setMode(newMode) {
   mode = newMode;
   clearError();
-  
+
   const nicknameGroup = getEl('nickname-group');
   const btnSubmit = getEl('btn-submit');
   const btnToggleMode = getEl('btn-toggle-mode');
@@ -43,14 +46,14 @@ function setMode(newMode) {
 
 // 에러 메시지 한글 변환
 function translateAuthError(error) {
-  const msg = error.message || '';
+  const msg = error?.message || '';
   if (msg.includes('Invalid login credentials')) return '이메일 또는 비밀번호가 올바르지 않습니다.';
   if (msg.includes('User already registered')) return '이미 가입된 이메일입니다.';
   if (msg.includes('Password should be at least')) return '비밀번호는 최소 6자리 이상이어야 합니다.';
   return msg || '오류가 발생했습니다. 다시 시도해주세요.';
 }
 
-// DB에서 유저 프로필 가져오기 (없으면 자동 생성)
+// DB 프로필 로드 / 생성
 async function fetchOrCreatePlayerProfile(user) {
   try {
     let { data: player, error } = await supabase
@@ -76,66 +79,61 @@ async function fetchOrCreatePlayerProfile(user) {
     updateUI(player);
   } catch (err) {
     console.error('프로필 로드 에러:', err);
-    showError('유저 정보를 불러오는 데 실패했습니다.');
+    showError('프로필 데이터를 불러오지 못했습니다. DB RLS 설정을 확인해주세요.');
   }
 }
 
-// 게임 홈 화면 UI 업데이트
+// UI 업데이트
 function updateUI(player) {
   if (!player) return;
-  
-  const playerName = getEl('player-name');
-  const playerLevel = getEl('player-level');
-  const playerExp = getEl('player-exp');
-  const expBar = getEl('exp-bar');
-  const playerHp = getEl('player-hp');
-  const hpBar = getEl('hp-bar');
-  const playerKills = getEl('player-kills');
-  const playerRuns = getEl('player-runs');
+
   const authSection = getEl('auth-section');
   const homeSection = getEl('home-section');
 
-  if (playerName) playerName.textContent = player.name || '모험가';
-  if (playerLevel) playerLevel.textContent = player.level || 1;
-  if (playerExp) playerExp.textContent = `${player.exp || 0} / ${player.exp_to_next || 100}`;
+  if (getEl('player-name')) getEl('player-name').textContent = player.name || '모험가';
+  if (getEl('player-level')) getEl('player-level').textContent = player.level || 1;
+  if (getEl('player-exp')) getEl('player-exp').textContent = `${player.exp || 0} / ${player.exp_to_next || 100}`;
   
   const expPercent = Math.min(100, Math.floor(((player.exp || 0) / (player.exp_to_next || 100)) * 100));
-  if (expBar) expBar.style.width = `${expPercent}%`;
+  if (getEl('exp-bar')) getEl('exp-bar').style.width = `${expPercent}%`;
 
-  if (playerHp) playerHp.textContent = `${player.hp || 100} / ${player.max_hp || 100}`;
+  if (getEl('player-hp')) getEl('player-hp').textContent = `${player.hp || 100} / ${player.max_hp || 100}`;
   const hpPercent = Math.min(100, Math.floor(((player.hp || 100) / (player.max_hp || 100)) * 100));
-  if (hpBar) hpBar.style.width = `${hpPercent}%`;
+  if (getEl('hp-bar')) getEl('hp-bar').style.width = `${hpPercent}%`;
 
-  if (playerKills) playerKills.textContent = player.kills || 0;
-  if (playerRuns) playerRuns.textContent = player.runs || 0;
+  if (getEl('player-kills')) getEl('player-kills').textContent = player.kills || 0;
+  if (getEl('player-runs')) getEl('player-runs').textContent = player.runs || 0;
 
   if (authSection) authSection.style.display = 'none';
   if (homeSection) homeSection.style.display = 'flex';
 }
 
-// 이벤트 리스너 등록 함수
-function initEvents() {
+// 이벤트 초기화
+function init() {
   const loginForm = getEl('login-form');
   const btnToggleMode = getEl('btn-toggle-mode');
   const btnLogout = getEl('btn-logout');
 
-  // 모드 전환 버튼
+  // 모드 토글 버튼 이벤트
   if (btnToggleMode) {
-    btnToggleMode.onclick = (e) => {
+    btnToggleMode.addEventListener('click', (e) => {
       e.preventDefault();
       setMode(mode === 'login' ? 'signup' : 'login');
-    };
+    });
   }
 
-  // 폼 제출 (로그인 / 회원가입)
+  // 폼 제출 이벤트 (로그인 / 회원가입)
   if (loginForm) {
-    loginForm.onsubmit = async (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       clearError();
 
-      const email = getEl('login-email')?.value.trim();
-      const pw = getEl('login-pw')?.value;
+      const emailInput = getEl('login-email');
+      const pwInput = getEl('login-pw');
       const btnSubmit = getEl('btn-submit');
+
+      const email = emailInput ? emailInput.value.trim() : '';
+      const pw = pwInput ? pwInput.value : '';
 
       if (!email || !pw) {
         showError('이메일과 비밀번호를 입력해주세요.');
@@ -149,7 +147,8 @@ function initEvents() {
 
       try {
         if (mode === 'signup') {
-          const nickname = getEl('login-nickname')?.value.trim() || '모험가';
+          const nicknameInput = getEl('login-nickname');
+          const nickname = nicknameInput ? nicknameInput.value.trim() : '모험가';
 
           const { data, error } = await supabase.auth.signUp({
             email,
@@ -160,7 +159,7 @@ function initEvents() {
           if (error) throw error;
 
           if (data?.user) {
-            showError('모험가 등록 성공! 이동 중...', true);
+            showError('모험가 등록 성공! 입장합니다...', true);
             await fetchOrCreatePlayerProfile(data.user);
           }
         } else {
@@ -176,7 +175,7 @@ function initEvents() {
           }
         }
       } catch (error) {
-        console.error('Auth Error:', error);
+        console.error('인증 에러 발생:', error);
         showError(translateAuthError(error));
       } finally {
         if (btnSubmit) {
@@ -184,34 +183,36 @@ function initEvents() {
           btnSubmit.textContent = mode === 'signup' ? '모험가 등록' : '입장하기';
         }
       }
-    };
+    });
   }
 
-  // 로그아웃
+  // 로그아웃 버튼 이벤트
   if (btnLogout) {
-    btnLogout.onclick = async () => {
+    btnLogout.addEventListener('click', async () => {
       await supabase.auth.signOut();
       const authSection = getEl('auth-section');
       const homeSection = getEl('home-section');
       if (homeSection) homeSection.style.display = 'none';
       if (authSection) authSection.style.display = 'flex';
-      
+
       if (getEl('login-email')) getEl('login-email').value = '';
       if (getEl('login-pw')) getEl('login-pw').value = '';
       if (getEl('login-nickname')) getEl('login-nickname').value = '';
       clearError();
-    };
+    });
   }
-}
 
-// DOM 로드 완료 후 실행
-document.addEventListener('DOMContentLoaded', () => {
-  initEvents();
-
-  // 기존 로그인 세션 체크
+  // 기존 로그인 체크
   supabase.auth.getSession().then(({ data: { session } }) => {
     if (session?.user) {
       fetchOrCreatePlayerProfile(session.user);
     }
   });
-});
+}
+
+// 스크립트 실행
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}

@@ -1,1963 +1,2176 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>던전 퀴즈 RPG - Edugeon</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
-<style>
-:root {
---bg-navy: #0b1120;
---card-slate: #151e32;
---card-border: #26334d;
---amber-main: #f59e0b;
---amber-glow: rgba(245, 158, 11, 0.35);
-}
-* {
-box-sizing: border-box;
--webkit-tap-highlight-color: transparent;
-}
-body {
-background-color: var(--bg-navy);
-background-image:
-linear-gradient(to right, rgba(30, 41, 59, 0.38) 1px, transparent 1px),
-linear-gradient(to bottom, rgba(30, 41, 59, 0.38) 1px, transparent 1px);
-background-size: 36px 36px;
-color: #f8fafc;
-font-family: 'Noto Sans KR', sans-serif;
-min-height: 100vh;
-overflow-x: hidden;
-user-select: none;
-}
-.font-retro {
-font-family: 'DotGothic16', 'Noto Sans KR', sans-serif;
-letter-spacing: 0.04em;
-}
-.pixel-art {
-image-rendering: pixelated;
-image-rendering: crisp-edges;
-}
-/* Glass / Slate Card matching screenshot */
-.rpg-card {
-background: linear-gradient(180deg, #182238 0%, #121a2b 100%);
-border: 1.5px solid #2a3958;
-box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-}
-.rpg-subcard {
-background: #0e1525;
-border: 1px solid #23304a;
-}
-/* Main Campfire Arena Frame */
-.arena-frame {
-background: radial-gradient(circle at 50% 60%, rgba(245, 158, 11, 0.14) 0%, rgba(18, 22, 33, 0.96) 65%, #0d121d 100%);
-border: 2px solid #f59e0b;
-box-shadow: 0 0 30px rgba(245, 158, 11, 0.18), inset 0 0 40px rgba(0, 0, 0, 0.65);
-position: relative;
-}
-.arch-glow {
-border-top: 2px solid rgba(245, 158, 11, 0.28);
-border-left: 2px solid rgba(245, 158, 11, 0.22);
-border-right: 2px solid rgba(245, 158, 11, 0.22);
-border-radius: 9999px 9999px 0 0;
-}
-/* Amber Action Button */
-.btn-amber {
-background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 55%, #d97706 100%);
-color: #0b1120;
-border: 1.5px solid #fde68a;
-box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5);
-transition: transform 0.12s ease, filter 0.15s ease, box-shadow 0.15s ease;
-}
-.btn-amber:hover {
-filter: brightness(1.06);
-box-shadow: 0 8px 26px rgba(245, 158, 11, 0.5);
-}
-.btn-amber:active {
-transform: translateY(2px) scale(0.99);
-}
-/* Animations */
-@keyframes heroIdle {
-0%, 100% { transform: translateY(0px); }
-50% { transform: translateY(-4px); }
-}
-.animate-hero {
-animation: heroIdle 2.2s ease-in-out infinite;
-}
-@keyframes flameFlicker {
-0%, 100% { transform: scale(1) rotate(-1deg); filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.8)); }
-33% { transform: scale(1.07, 0.95) rotate(2deg); filter: drop-shadow(0 0 14px rgba(251, 191, 36, 0.95)); }
-66% { transform: scale(0.96, 1.06) rotate(-2deg); filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.85)); }
-}
-.animate-flame {
-animation: flameFlicker 0.9s ease-in-out infinite;
-transform-origin: bottom center;
-}
-@keyframes monsterFloat {
-0%, 100% { transform: translateY(0px) scale(1); }
-50% { transform: translateY(-6px) scale(1.02); }
-}
-.animate-monster {
-animation: monsterFloat 2s ease-in-out infinite;
-}
-@keyframes slashAttack {
-0% { transform: translateX(0); }
-30% { transform: translateX(38px) scale(1.1); }
-60% { transform: translateX(-8px); }
-100% { transform: translateX(0); }
-}
-.animate-slash {
-animation: slashAttack 0.42s cubic-bezier(0.22, 1, 0.36, 1);
-}
-@keyframes shakeHit {
-0%, 100% { transform: translate(0, 0); }
-20% { transform: translate(-10px, 4px); }
-40% { transform: translate(10px, -4px); }
-60% { transform: translate(-7px, -2px); }
-80% { transform: translate(7px, 2px); }
-}
-.animate-shake {
-animation: shakeHit 0.4s ease-in-out;
-}
-@keyframes damageFlash {
-0% { background-color: rgba(239, 68, 68, 0.35); }
-100% { background-color: transparent; }
-}
-.flash-red {
-animation: damageFlash 0.45s ease-out;
-}
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-width: 6px;
-height: 6px;
-}
-::-webkit-scrollbar-track {
-background: #0b1120;
-}
-::-webkit-scrollbar-thumb {
-background: #334155;
-border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-background: #f59e0b;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>던전 퀴즈 RPG - Edugeon</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-navy: #0b1120;
+      --card-slate: #151e32;
+      --card-border: #26334d;
+      --amber-main: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-navy);
+      background-image:
+        linear-gradient(to right, rgba(30, 41, 59, 0.38) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(30, 41, 59, 0.38) 1px, transparent 1px);
+      background-size: 36px 36px;
+      color: #f8fafc;
+      font-family: 'Noto Sans KR', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    .font-retro {
+      font-family: 'DotGothic16', 'Noto Sans KR', sans-serif;
+      letter-spacing: 0.04em;
+    }
+
+    .pixel-art {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    /* Glass / Slate Card matching screenshot */
+    .rpg-card {
+      background: linear-gradient(180deg, #182238 0%, #121a2b 100%);
+      border: 1.5px solid #2a3958;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    .rpg-subcard {
+      background: #0e1525;
+      border: 1px solid #23304a;
+    }
+
+    /* Main Campfire Arena Frame */
+    .arena-frame {
+      background: radial-gradient(circle at 50% 60%, rgba(245, 158, 11, 0.14) 0%, rgba(18, 22, 33, 0.96) 65%, #0d121d 100%);
+      border: 2px solid #f59e0b;
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.18), inset 0 0 40px rgba(0, 0, 0, 0.65);
+      position: relative;
+    }
+
+    .arch-glow {
+      border-top: 2px solid rgba(245, 158, 11, 0.28);
+      border-left: 2px solid rgba(245, 158, 11, 0.22);
+      border-right: 2px solid rgba(245, 158, 11, 0.22);
+      border-radius: 9999px 9999px 0 0;
+    }
+
+    /* Amber Action Button */
+    .btn-amber {
+      background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 55%, #d97706 100%);
+      color: #0b1120;
+      border: 1.5px solid #fde68a;
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      transition: transform 0.12s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-amber:hover {
+      filter: brightness(1.06);
+      box-shadow: 0 8px 26px rgba(245, 158, 11, 0.5);
+    }
+    .btn-amber:active {
+      transform: translateY(2px) scale(0.99);
+    }
+
+    /* Animations */
+    @keyframes heroIdle {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+    .animate-hero {
+      animation: heroIdle 2.2s ease-in-out infinite;
+    }
+
+    @keyframes flameFlicker {
+      0%, 100% { transform: scale(1) rotate(-1deg); filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.8)); }
+      33% { transform: scale(1.07, 0.95) rotate(2deg); filter: drop-shadow(0 0 14px rgba(251, 191, 36, 0.95)); }
+      66% { transform: scale(0.96, 1.06) rotate(-2deg); filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.85)); }
+    }
+    .animate-flame {
+      animation: flameFlicker 0.9s ease-in-out infinite;
+      transform-origin: bottom center;
+    }
+
+    @keyframes monsterFloat {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-6px) scale(1.02); }
+    }
+    .animate-monster {
+      animation: monsterFloat 2s ease-in-out infinite;
+    }
+
+    @keyframes slashAttack {
+      0% { transform: translateX(0); }
+      30% { transform: translateX(38px) scale(1.1); }
+      60% { transform: translateX(-8px); }
+      100% { transform: translateX(0); }
+    }
+    .animate-slash {
+      animation: slashAttack 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes shakeHit {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-10px, 4px); }
+      40% { transform: translate(10px, -4px); }
+      60% { transform: translate(-7px, -2px); }
+      80% { transform: translate(7px, 2px); }
+    }
+    .animate-shake {
+      animation: shakeHit 0.4s ease-in-out;
+    }
+
+    @keyframes damageFlash {
+      0% { background-color: rgba(239, 68, 68, 0.35); }
+      100% { background-color: transparent; }
+    }
+    .flash-red {
+      animation: damageFlash 0.45s ease-out;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b1120;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #f59e0b;
+    }
+  </style>
 </head>
 <body class="flex flex-col justify-between p-3 sm:p-5 md:p-6">
-<!-- Toast Notification Container -->
-<div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none w-full max-w-md px-4"></div>
-<!-- TOP HEADER BAR -->
-<header class="w-full max-w-5xl mx-auto flex items-start justify-between gap-2 sm:gap-4 mb-4 sm:mb-6">
-<!-- Top-Left: Adventure Log & Wrong Answer Note -->
-<button onclick="openJournalModal()" class="rpg-card hover:border-amber-400/80 transition-all rounded-xl p-2.5 sm:p-3 flex items-center gap-2.5 sm:gap-3 text-left group cursor-pointer shrink-0">
-<div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-amber-950/70 border border-amber-500/40 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-<!-- Pixel Scroll/Book SVG -->
-<svg class="w-6 h-6 sm:w-7 sm:h-7 pixel-art" viewBox="0 0 16 16" fill="none">
-<rect x="3" y="2" width="10" height="2" fill="#d97706"/>
-<rect x="2" y="3" width="12" height="10" fill="#f59e0b"/>
-<rect x="4" y="4" width="8" height="8" fill="#fef3c7"/>
-<rect x="5" y="6" width="6" height="1" fill="#92400e"/>
-<rect x="5" y="8" width="5" height="1" fill="#92400e"/>
-<rect x="5" y="10" width="4" height="1" fill="#92400e"/>
-<rect x="3" y="12" width="10" height="2" fill="#b45309"/>
-</svg>
-</div>
-<div class="min-w-[115px] sm:min-w-[165px]">
-<div class="flex items-center gap-1.5">
-<span id="hdr-level" class="font-retro text-amber-400 font-bold text-xs sm:text-sm">LV.1</span>
-<span class="font-bold text-xs sm:text-sm text-slate-100 truncate">모험가 일지 & 오답노트</span>
-<span id="wrong-badge" class="hidden bg-rose-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
-</div>
-<div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden mt-1.5 border border-slate-700/80">
-<div id="hdr-exp-bar" class="h-full bg-gradient-to-r from-amber-500 to-yellow-300 transition-all duration-500" style="width: 0%;"></div>
-</div>
-<div id="hdr-exp-text" class="font-retro text-[10px] sm:text-[11px] text-slate-400 mt-0.5">EXP 0 / 100</div>
-</div>
-</button>
-<!-- Top-Center: Game Title -->
-<div class="text-center pt-1 sm:pt-1.5 flex-1 min-w-0">
-<div class="font-retro text-[10px] sm:text-xs tracking-[0.2em] text-amber-400/90 uppercase truncate">KNOWLEDGE LABYRINTH</div>
-<h1 class="text-lg sm:text-2xl md:text-3xl font-black tracking-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] truncate">
-던전 퀴즈 RPG
-</h1>
-</div>
-<!-- Top-Right: Settings & Admin Quiz Manager -->
-<button onclick="openSettingsModal()" class="rpg-card hover:border-amber-400/80 transition-all rounded-xl p-2.5 sm:p-3 flex items-center gap-2.5 sm:gap-3 text-right group cursor-pointer shrink-0">
-<div class="hidden sm:block">
-<div class="font-bold text-xs sm:text-sm text-slate-100">설정 / 퀴즈관리</div>
-<div id="hdr-sfx-status" class="font-retro text-[11px] text-emerald-400 mt-0.5">SFX: ON</div>
-</div>
-<div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-slate-800/90 border border-slate-600/60 flex items-center justify-center shrink-0 group-hover:rotate-45 transition-transform duration-300">
-<!-- Pixel Gear SVG -->
-<svg class="w-6 h-6 sm:w-7 sm:h-7 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-<circle cx="12" cy="12" r="3"></circle>
-<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-</svg>
-</div>
-</button>
-</header>
-<!-- MAIN CONTENT AREA -->
-<main class="w-full max-w-3xl mx-auto flex-1 flex flex-col justify-center gap-3.5 sm:gap-4 my-auto">
-<!-- ==================== VIEW 1: HOME SCREEN (모험가 베이스캠프) ==================== -->
-<div id="home-view" class="flex flex-col gap-3.5 sm:gap-4">
-<!-- Player Status & Equipment Bar -->
-<section class="rpg-card rounded-2xl p-2.5 sm:p-3.5 grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
-<!-- Max HP -->
-<div class="rpg-subcard rounded-xl p-2.5 flex items-center gap-2.5 border-rose-500/30">
-<div class="w-9 h-9 rounded-lg bg-rose-950/80 border border-rose-500/40 flex items-center justify-center shrink-0">
-<svg class="w-5 h-5 text-rose-500" viewBox="0 0 24 24" fill="currentColor">
-<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-</svg>
-</div>
-<div>
-<div class="text-[11px] text-slate-400 font-medium">최대 체력 (HP)</div>
-<div id="stat-hp" class="font-retro text-sm sm:text-base font-bold text-rose-400">100 / 100</div>
-</div>
-</div>
-<!-- Damage Reduction -->
-<div class="rpg-subcard rounded-xl p-2.5 flex items-center gap-2.5 border-sky-500/30">
-<div class="w-9 h-9 rounded-lg bg-sky-950/80 border border-sky-500/40 flex items-center justify-center shrink-0">
-<svg class="w-5 h-5 text-sky-400" viewBox="0 0 24 24" fill="currentColor">
-<path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-</svg>
-</div>
-<div>
-<div class="text-[11px] text-slate-400 font-medium">피해 감소</div>
-<div id="stat-def" class="font-retro text-sm sm:text-base font-bold text-sky-300">-0 DMG</div>
-</div>
-</div>
-<!-- Equipped Weapon -->
-<div class="rpg-subcard rounded-xl p-2.5 flex items-center gap-2.5 border-amber-500/30">
-<div class="w-9 h-9 rounded-lg bg-amber-950/70 border border-amber-500/40 flex items-center justify-center shrink-0 text-base">
-🗡️
-</div>
-<div class="min-w-0">
-<div class="text-[10px] text-amber-400/90 font-semibold">무기 <span id="stat-weapon-bonus" class="text-amber-300"></span></div>
-<div id="stat-weapon" class="text-xs sm:text-sm font-bold text-amber-300 truncate">녹슨 단검</div>
-</div>
-</div>
-<!-- Equipped Armor -->
-<div class="rpg-subcard rounded-xl p-2.5 flex items-center gap-2.5 border-emerald-500/30">
-<div class="w-9 h-9 rounded-lg bg-emerald-950/70 border border-emerald-500/40 flex items-center justify-center shrink-0 text-base">
-🛡️
-</div>
-<div class="min-w-0">
-<div class="text-[10px] text-emerald-400/90 font-semibold">방어구</div>
-<div id="stat-armor" class="text-xs sm:text-sm font-bold text-emerald-300 truncate">천 망토</div>
-</div>
-</div>
-</section>
-<!-- Main Campfire Stage -->
-<section class="arena-frame rounded-2xl p-5 sm:p-7 min-h-[290px] sm:min-h-[330px] flex flex-col items-center justify-between overflow-hidden">
-<!-- Decorative Background Arches -->
-<div class="arch-glow w-[240px] sm:w-[320px] h-[250px] sm:h-[290px] absolute bottom-0 pointer-events-none"></div>
-<div class="arch-glow w-[170px] sm:w-[230px] h-[210px] sm:h-[245px] absolute bottom-0 pointer-events-none opacity-60"></div>
-<!-- Top Pill Badge -->
-<div class="relative z-10 bg-slate-900/90 border border-amber-500/40 rounded-full px-4 py-1 flex items-center gap-2 shadow-md">
-<span class="text-sm">⛺</span>
-<span class="text-xs sm:text-sm font-bold text-amber-300 tracking-wide">모험가 베이스캠프</span>
-</div>
-<!-- Center Stage: Party Slot + Hero + Campfire -->
-<div class="relative z-10 w-full max-w-lg flex items-end justify-center gap-5 sm:gap-10 my-4 pt-3">
-<!-- Left: Future Friend Co-op Slot -->
-<button onclick="showFriendComingSoon()" class="group flex flex-col items-center cursor-pointer mb-2">
-<div class="w-20 h-28 sm:w-24 sm:h-32 rounded-xl border-2 border-dashed border-slate-600/80 bg-slate-900/50 hover:border-amber-400/70 hover:bg-slate-800/60 transition-all flex flex-col items-center justify-center p-2 text-center">
-<span class="text-xl sm:text-2xl text-slate-500 group-hover:text-amber-400 font-bold mb-1">+</span>
-<span class="text-[11px] sm:text-xs font-bold text-slate-400 group-hover:text-slate-200 leading-tight">동행 친구
-(준비중)</span>
-</div>
-<span class="font-retro text-[10px] text-slate-500 mt-2 tracking-wider">PARTY SLOT</span>
-</button>
-<!-- Center: Pixel Warrior Character -->
-<div class="flex flex-col items-center">
-<div id="home-hero-sprite" class="animate-hero relative">
-<!-- Pixel Hero SVG (Knight with Helmet, Shield, Sword) -->
-<svg class="w-24 h-24 sm:w-28 sm:h-28 pixel-art drop-shadow-[0_10px_10px_rgba(0,0,0,0.75)]" viewBox="0 0 16 16" fill="none">
-<!-- Plume -->
-<rect x="7" y="0" width="2" height="2" fill="#ef4444"/>
-<!-- Helmet -->
-<rect x="5" y="2" width="6" height="5" fill="#94a3b8"/>
-<rect x="6" y="2" width="4" height="1" fill="#cbd5e1"/>
-<!-- Visor / Eyes -->
-<rect x="5" y="4" width="6" height="2" fill="#1e293b"/>
-<rect x="6" y="4" width="1" height="1" fill="#38bdf8"/>
-<rect x="9" y="4" width="1" height="1" fill="#38bdf8"/>
-<!-- Cape -->
-<rect x="4" y="7" width="8" height="5" fill="#dc2626"/>
-<!-- Armor Body -->
-<rect x="5" y="7" width="6" height="5" fill="#cbd5e1"/>
-<rect x="7" y="8" width="2" height="3" fill="#f59e0b"/>
-<!-- Shield (Left) -->
-<rect x="2" y="7" width="3" height="5" fill="#0284c7"/>
-<rect x="3" y="8" width="1" height="3" fill="#7dd3fc"/>
-<!-- Sword (Right) -->
-<rect x="12" y="3" width="1" height="6" fill="#f8fafc"/>
-<rect x="11" y="9" width="3" height="1" fill="#f59e0b"/>
-<rect x="12" y="10" width="1" height="2" fill="#78350f"/>
-<!-- Boots -->
-<rect x="5" y="12" width="2" height="3" fill="#475569"/>
-<rect x="9" y="12" width="2" height="3" fill="#475569"/>
-<rect x="4" y="14" width="3" height="1" fill="#1e293b"/>
-<rect x="9" y="14" width="3" height="1" fill="#1e293b"/>
-</svg>
-</div>
-<!-- Floor Shadow -->
-<div class="w-16 h-2.5 bg-black/60 rounded-full blur-[2px] -mt-1 mb-2"></div>
-<!-- Nameplate -->
-<div class="bg-amber-500 text-slate-950 font-black text-xs sm:text-sm px-3.5 py-1 rounded-md shadow-md">
-용사 (YOU)
-</div>
-</div>
-<!-- Right: Animated Pixel Campfire -->
-<div class="flex flex-col items-center mb-1">
-<div class="animate-flame">
-<svg class="w-12 h-14 sm:w-14 sm:h-16 pixel-art" viewBox="0 0 16 16" fill="none">
-<!-- Outer Flame -->
-<rect x="7" y="1" width="2" height="2" fill="#f97316"/>
-<rect x="6" y="3" width="4" height="2" fill="#f97316"/>
-<rect x="5" y="5" width="6" height="4" fill="#ea580c"/>
-<rect x="4" y="7" width="8" height="3" fill="#dc2626"/>
-<!-- Inner Flame -->
-<rect x="7" y="4" width="2" height="2" fill="#fde047"/>
-<rect x="6" y="6" width="4" height="3" fill="#facc15"/>
-<rect x="7" y="8" width="2" height="2" fill="#fef9c3"/>
-<!-- Logs -->
-<rect x="3" y="11" width="10" height="2" fill="#78350f"/>
-<rect x="4" y="10" width="8" height="1" fill="#92400e"/>
-<rect x="2" y="12" width="12" height="2" fill="#451a03"/>
-</svg>
-</div>
-<span class="font-retro text-[10px] text-amber-500/80 mt-2 tracking-widest">RESTING</span>
-</div>
-</div>
-<!-- Subtle Floor Horizon -->
-<div class="w-3/4 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent"></div>
-</section>
-<!-- Bottom Action Bar: Zone Selector + Start Exploration -->
-<section class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-stretch">
-<!-- Dungeon Zone Selector -->
-<div class="sm:col-span-5 rpg-card rounded-xl p-2.5 sm:p-3 flex items-center gap-2.5">
-<div class="text-[11px] font-bold text-slate-400 leading-tight shrink-0 border-r border-slate-700 pr-2.5">
-탐험
-구역
-</div>
-<div class="relative flex-1 min-w-0">
-<select id="zone-select" onchange="onSelectZone()" class="w-full bg-slate-950/90 text-amber-300 font-bold text-xs sm:text-sm rounded-lg px-3 py-2.5 border border-slate-700 focus:border-amber-400 focus:outline-none appearance-none cursor-pointer pr-8 truncate">
-<!-- Populated dynamically -->
-</select>
-<div class="pointer-events-none absolute inset-y-0 right-2.5 flex items-center text-slate-400 text-xs">
-▼
-</div>
-</div>
-</div>
-<!-- Start Dungeon Button -->
-<button onclick="startDungeonRun()" class="sm:col-span-7 btn-amber rounded-xl py-3.5 px-6 font-black text-base sm:text-lg flex items-center justify-center gap-2.5 cursor-pointer">
-<span>⚔️</span>
-<span>던전 탐험 시작</span>
-</button>
-</section>
-</div>
-<!-- ==================== VIEW 2: DUNGEON BATTLE SCREEN ==================== -->
-<div id="battle-view" class="hidden flex-col gap-3.5 sm:gap-4">
-<!-- Top Battle Progress & Retreat Bar -->
-<div class="rpg-card rounded-xl p-3 flex items-center justify-between gap-3">
-<div class="flex items-center gap-2.5 min-w-0">
-<span class="bg-amber-500/20 border border-amber-500/40 text-amber-300 font-retro text-xs px-2.5 py-1 rounded-md shrink-0" id="battle-zone-name">지식의 미궁</span>
-<span class="font-retro text-xs sm:text-sm text-slate-300 truncate" id="battle-stage-text">STAGE 1 / 5</span>
-</div>
-<button onclick="confirmRetreat()" class="bg-rose-950/80 hover:bg-rose-900 border border-rose-600/60 text-rose-200 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer shrink-0">
-🏃 탐험 포기 (나가기)
-</button>
-</div>
-<!-- Battle Arena Stage -->
-<div id="battle-arena" class="arena-frame rounded-2xl p-4 sm:p-6 flex flex-col justify-between gap-4">
-<!-- Combatants Row -->
-<div class="grid grid-cols-2 gap-4 items-end pt-2">
-<!-- Player Side -->
-<div class="flex flex-col items-center">
-<div class="w-full max-w-[160px] mb-2">
-<div class="flex justify-between text-[11px] font-bold mb-1">
-<span class="text-amber-300">용사 (LV.<span id="btl-lvl">1</span>)</span>
-<span id="btl-hp-text" class="font-retro text-rose-400">100/100</span>
-</div>
-<div class="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-700">
-<div id="btl-hp-bar" class="h-full bg-gradient-to-r from-rose-600 to-rose-400 transition-all duration-300" style="width: 100%;"></div>
-</div>
-</div>
-<div id="battle-hero-sprite" class="transition-transform">
-<svg class="w-20 h-20 sm:w-24 sm:h-24 pixel-art" viewBox="0 0 16 16" fill="none">
-<rect x="7" y="0" width="2" height="2" fill="#ef4444"/>
-<rect x="5" y="2" width="6" height="5" fill="#94a3b8"/>
-<rect x="6" y="2" width="4" height="1" fill="#cbd5e1"/>
-<rect x="5" y="4" width="6" height="2" fill="#1e293b"/>
-<rect x="6" y="4" width="1" height="1" fill="#38bdf8"/>
-<rect x="9" y="4" width="1" height="1" fill="#38bdf8"/>
-<rect x="4" y="7" width="8" height="5" fill="#dc2626"/>
-<rect x="5" y="7" width="6" height="5" fill="#cbd5e1"/>
-<rect x="7" y="8" width="2" height="3" fill="#f59e0b"/>
-<rect x="2" y="7" width="3" height="5" fill="#0284c7"/>
-<rect x="3" y="8" width="1" height="3" fill="#7dd3fc"/>
-<rect x="12" y="3" width="1" height="6" fill="#f8fafc"/>
-<rect x="11" y="9" width="3" height="1" fill="#f59e0b"/>
-<rect x="12" y="10" width="1" height="2" fill="#78350f"/>
-<rect x="5" y="12" width="2" height="3" fill="#475569"/>
-<rect x="9" y="12" width="2" height="3" fill="#475569"/>
-</svg>
-</div>
-</div>
-<!-- Monster Side -->
-<div class="flex flex-col items-center">
-<div class="w-full max-w-[160px] mb-2">
-<div class="flex justify-between text-[11px] font-bold mb-1">
-<span id="btl-monster-name" class="text-purple-300 truncate">지식의 슬라임</span>
-<span id="btl-monster-hp-text" class="font-retro text-emerald-400">100%</span>
-</div>
-<div class="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-700">
-<div id="btl-monster-hp-bar" class="h-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-300" style="width: 100%;"></div>
-</div>
-</div>
-<div id="battle-monster-sprite" class="animate-monster">
-<!-- Dynamic Monster SVG injected by JS -->
-</div>
-</div>
-</div>
-<!-- Quiz Question Card -->
-<div class="rpg-card rounded-xl p-4 sm:p-5 border-amber-500/40">
-<div class="flex items-center justify-between gap-2 mb-2">
-<span id="quiz-type-badge" class="text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-500/40">객관식</span>
-<span class="font-retro text-xs text-amber-400">+<span id="quiz-exp-reward">25</span> EXP</span>
-</div>
-<p id="quiz-question-text" class="text-base sm:text-lg font-bold text-white leading-relaxed whitespace-pre-wrap">
-문제 내용이 여기에 표시됩니다.
-</p>
-<!-- Optional Question Image -->
-<div id="quiz-question-img-wrap" class="hidden mt-3">
-<img id="quiz-question-img" src="" alt="문제 이미지" class="max-h-52 rounded-lg border border-slate-700 mx-auto object-contain bg-slate-950" onerror="this.parentElement.classList.add('hidden')" />
-</div>
-<!-- Answer Input Area (Multiple Choice or Short Answer) -->
-<div id="quiz-answer-area" class="mt-4 flex flex-col gap-2.5">
-<!-- Dynamically populated -->
-</div>
-<!-- Feedback & Explanation Box after Answering -->
-<div id="quiz-feedback-box" class="hidden mt-4 rounded-xl p-3.5 border">
-<div id="quiz-feedback-title" class="font-black text-sm sm:text-base mb-1"></div>
-<div id="quiz-feedback-detail" class="text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-wrap"></div>
-<div id="quiz-explanation-img-wrap" class="hidden mt-2.5">
-<img id="quiz-explanation-img" src="" alt="해설 이미지" class="max-h-44 rounded-lg border border-slate-700 object-contain bg-slate-950" onerror="this.parentElement.classList.add('hidden')" />
-</div>
-<button id="next-stage-btn" onclick="proceedNextStage()" class="btn-amber w-full mt-3.5 py-2.5 rounded-lg font-black text-sm cursor-pointer">
-다음 층으로 전진 ➔
-</button>
-</div>
-</div>
-</div>
-</div>
-</main>
-<!-- FOOTER -->
-<footer class="w-full max-w-5xl mx-auto text-center pt-4 pb-1 text-[11px] text-slate-500 font-retro">
-KNOWLEDGE LABYRINTH • SESSION PLAY MODE (퀴즈 데이터는 브라우저에 영구 저장됩니다)
-</footer>
-<!-- ==================== MODAL 1: ADVENTURE LOG & WRONG ANSWER NOTE ==================== -->
-<div id="journal-modal" class="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5">
-<div class="rpg-card w-full max-w-2xl max-h-[88vh] rounded-2xl flex flex-col overflow-hidden border-amber-500/50">
-<!-- Modal Header -->
-<div class="p-4 border-b border-slate-700/80 flex items-center justify-between bg-slate-900/70">
-<div class="flex items-center gap-2.5">
-<span class="text-xl">📜</span>
-<div>
-<h2 class="font-black text-base sm:text-lg text-amber-300">모험가 일지 & 오답노트</h2>
-<p class="text-[11px] text-slate-400">현재 세션의 성장 기록 및 틀린 문제 복습</p>
-</div>
-</div>
-<button onclick="closeModal('journal-modal')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold cursor-pointer">✕</button>
-</div>
-<!-- Modal Body -->
-<div class="p-4 sm:p-5 overflow-y-auto space-y-5">
-<!-- Level & EXP Card -->
-<div class="rpg-subcard rounded-xl p-4 border-amber-500/30">
-<div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-<div class="flex items-center gap-2">
-<span id="jnl-level" class="font-retro text-xl font-black text-amber-400">LV.1</span>
-<span class="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold">탐험 완료: <span id="jnl-clears">0</span>회</span>
-</div>
-<span id="jnl-exp-text" class="font-retro text-xs text-slate-300">EXP 0 / 100</span>
-</div>
-<div class="w-full h-3 bg-slate-950 rounded-full overflow-hidden border border-slate-700">
-<div id="jnl-exp-bar" class="h-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-300 transition-all duration-300" style="width: 0%;"></div>
-</div>
-<p class="text-[11px] text-slate-400 mt-2">💡 던전 탐험을 끝까지 완주하면 처치한 괴물 수만큼 경험치를 얻고, 레벨업 시 새로운 무기/방어구를 획득합니다!</p>
-</div>
-<!-- Unlocked Equipment Inventory -->
-<div>
-<h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">⚔️ 보유 및 장착 장비 (레벨업 보상)</h3>
-<div id="jnl-gear-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-<!-- Populated by JS -->
-</div>
-</div>
-<!-- Wrong Answer Notes -->
-<div>
-<div class="flex items-center justify-between mb-2">
-<h3 class="text-xs font-bold text-rose-300 uppercase tracking-wider">📕 오답노트 (<span id="jnl-wrong-count">0</span>문제)</h3>
-<span class="text-[11px] text-slate-500">창을 닫으면 기록이 초기화됩니다</span>
-</div>
-<div id="jnl-wrong-list" class="space-y-3">
-<!-- Populated by JS -->
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- ==================== MODAL 2: SETTINGS & ADMIN QUIZ MANAGER ==================== -->
-<div id="settings-modal" class="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5">
-<div class="rpg-card w-full max-w-3xl max-h-[90vh] rounded-2xl flex flex-col overflow-hidden border-slate-600">
-<!-- Header + Tabs -->
-<div class="p-4 border-b border-slate-700/80 bg-slate-900/80 flex flex-wrap items-center justify-between gap-2">
-<div class="flex items-center gap-2">
-<button id="tab-btn-general" onclick="switchSettingsTab('general')" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-amber-500 text-slate-950 cursor-pointer">
-⚙️ 게임 설정
-</button>
-<button id="tab-btn-admin" onclick="switchSettingsTab('admin')" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer">
-🔐 관리자 퀴즈 관리
-</button>
-</div>
-<button onclick="closeModal('settings-modal')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold cursor-pointer">✕</button>
-</div>
-<!-- TAB 1: GENERAL SETTINGS -->
-<div id="settings-tab-general" class="p-5 overflow-y-auto space-y-4">
-<div class="rpg-subcard rounded-xl p-4 flex items-center justify-between">
-<div>
-<div class="font-bold text-sm text-white">🔊 레트로 효과음 (SFX)</div>
-<div class="text-xs text-slate-400">공격, 피격, 레벨업 신디사이저 사운드</div>
-</div>
-<button id="toggle-sfx-btn" onclick="toggleSFX()" class="px-4 py-2 rounded-lg font-retro text-xs font-bold bg-emerald-600 text-white cursor-pointer">
-ON
-</button>
-</div>
-<div class="rpg-subcard rounded-xl p-4 flex items-center justify-between">
-<div>
-<div class="font-bold text-sm text-white">🔔 전투 알림 및 화면 진동 효과</div>
-<div class="text-xs text-slate-400">피격 시 화면 흔들림 및 전투 알림 배너 표시</div>
-</div>
-<button id="toggle-vfx-btn" onclick="toggleVFX()" class="px-4 py-2 rounded-lg font-retro text-xs font-bold bg-emerald-600 text-white cursor-pointer">
-ON
-</button>
-</div>
-<div class="rpg-subcard rounded-xl p-4 flex items-center justify-between border-rose-500/30">
-<div>
-<div class="font-bold text-sm text-rose-300">🔄 현재 플레이 기록 초기화</div>
-<div class="text-xs text-slate-400">레벨, 장비, 오답노트를 처음(LV.1)으로 되돌립니다 (퀴즈는 유지됨)</div>
-</div>
-<button onclick="resetSessionProgress()" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-rose-900/80 hover:bg-rose-800 border border-rose-500/50 text-rose-100 cursor-pointer">
-초기화
-</button>
-</div>
-</div>
-<!-- TAB 2: ADMIN MANAGER (LOCKED BY PIN 601090) -->
-<div id="settings-tab-admin" class="hidden p-4 sm:p-5 overflow-y-auto flex-1">
-<!-- Password Lock Screen -->
-<div id="admin-lock-screen" class="py-10 flex flex-col items-center justify-center text-center max-w-sm mx-auto">
-<div class="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-2xl mb-3">
-🔒
-</div>
-<h3 class="font-black text-lg text-white mb-1">관리자 전용 구역</h3>
-<p class="text-xs text-slate-400 mb-4">퀴즈 및 탐험구역을 수정하려면 관리자 비밀번호를 입력하세요.</p>
-<div class="w-full flex gap-2">
-<input id="admin-pin-input" type="password" inputmode="numeric" maxlength="10" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter') verifyAdminPin()" class="flex-1 bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-xl px-4 py-2.5 text-center font-retro text-base text-amber-300 tracking-widest focus:outline-none" />
-<button onclick="verifyAdminPin()" class="btn-amber px-5 py-2.5 rounded-xl font-black text-sm cursor-pointer">
-확인
-</button>
-</div>
-<p id="admin-pin-error" class="hidden text-xs text-rose-400 font-bold mt-2">비밀번호가 일치하지 않습니다.</p>
-</div>
-<!-- Unlocked Admin Dashboard -->
-<div id="admin-dashboard" class="hidden space-y-6">
-<!-- GitHub / Backup Export & Import Bar -->
-<div class="rpg-subcard rounded-xl p-3.5 border-sky-500/30 flex flex-wrap items-center justify-between gap-2">
-<div>
-<div class="text-xs font-bold text-sky-300">💾 퀴즈 데이터 백업 / GitHub 배포용 내보내기</div>
-<div class="text-[11px] text-slate-400">현재 브라우저에 영구 저장됩니다. JSON으로 내보내거나 불러올 수 있습니다.</div>
-</div>
-<div class="flex items-center gap-2">
-<button onclick="exportQuizJSON()" class="px-3 py-1.5 rounded-lg bg-sky-900/70 hover:bg-sky-800 border border-sky-500/40 text-sky-200 text-xs font-bold cursor-pointer">
-📤 JSON 내보내기
-</button>
-<label class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-xs font-bold cursor-pointer">
-📥 JSON 불러오기
-<input type="file" accept=".json" onchange="importQuizJSON(event)" class="hidden" />
-</label>
-</div>
-</div>
-<!-- SECTION A: DUNGEON ZONES MANAGEMENT -->
-<div class="rpg-subcard rounded-xl p-4 border-amber-500/30">
-<h3 class="font-black text-sm text-amber-300 mb-3">🗺️ 1. 탐험구역 (과목/분야) 관리</h3>
-<div class="flex gap-2 mb-3">
-<input id="new-zone-name" type="text" placeholder="새 탐험구역 이름 (예: 한국사 신전, 영단어 숲)" class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:border-amber-400 focus:outline-none" />
-<button onclick="addZone()" class="btn-amber px-4 py-2 rounded-lg font-black text-xs sm:text-sm cursor-pointer shrink-0">
-+ 구역 추가
-</button>
-</div>
-<div id="admin-zone-list" class="space-y-2">
-<!-- Populated by JS -->
-</div>
-</div>
-<!-- SECTION B: ADD / EDIT QUIZ FORM -->
-<div class="rpg-subcard rounded-xl p-4 border-emerald-500/30">
-<div class="flex items-center justify-between mb-3">
-<h3 id="quiz-form-title" class="font-black text-sm text-emerald-300">✍️ 2. 새 퀴즈 추가</h3>
-<button id="cancel-edit-btn" onclick="resetQuizForm()" class="hidden text-xs text-slate-400 hover:text-white underline cursor-pointer">
-수정 취소 (새로 작성)
-</button>
-</div>
-<input type="hidden" id="edit-quiz-id" value="" />
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-<!-- Target Zone -->
-<div>
-<label class="block text-[11px] font-bold text-slate-400 mb-1">소속 탐험구역 선택</label>
-<select id="quiz-form-zone" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-amber-300 font-bold focus:border-amber-400 focus:outline-none">
-<!-- Populated by JS -->
-</select>
-</div>
-<!-- Quiz Type -->
-<div>
-<label class="block text-[11px] font-bold text-slate-400 mb-1">문제 유형</label>
-<select id="quiz-form-type" onchange="renderAdminOptionsEditor()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-white font-bold focus:border-amber-400 focus:outline-none">
-<option value="multiple">객관식 (보기 동적 추가)</option>
-<option value="subjective">주관식 (단답형 입력)</option>
-</select>
-</div>
-</div>
-<!-- Question Text & Image -->
-<div class="mb-3">
-<label class="block text-[11px] font-bold text-slate-400 mb-1">문제 내용</label>
-<textarea id="quiz-form-question" rows="2" placeholder="문제를 입력하세요..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:border-amber-400 focus:outline-none"></textarea>
-<!-- Question Image Input -->
-<div class="flex flex-wrap items-center gap-2 mt-1.5">
-<input id="quiz-form-qimg" type="text" placeholder="문제 이미지 URL (선택)" oninput="previewFormImg('qimg')" class="flex-1 min-w-[160px] bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:border-amber-400 focus:outline-none" />
-<label class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-[11px] font-bold text-slate-200 cursor-pointer shrink-0">
-🖼️ 사진 첨부
-<input type="file" accept="image/*" onchange="handleImageUpload(event, 'qimg')" class="hidden" />
-</label>
-<button type="button" onclick="clearFormImg('qimg')" class="text-[11px] text-rose-400 hover:underline cursor-pointer">삭제</button>
-</div>
-<img id="preview-qimg" class="hidden mt-2 max-h-28 rounded border border-slate-700 object-contain" />
-</div>
-<!-- Dynamic Options (Multiple Choice) OR Short Answer Field -->
-<div id="admin-options-container" class="mb-3">
-<!-- Populated dynamically -->
-</div>
-<!-- Explanation Text & Image -->
-<div class="mb-4">
-<label class="block text-[11px] font-bold text-slate-400 mb-1">정답 해설 (선택)</label>
-<textarea id="quiz-form-explanation" rows="2" placeholder="오답 시 또는 정답 확인 시 보여줄 해설을 입력하세요..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:border-amber-400 focus:outline-none"></textarea>
-<div class="flex flex-wrap items-center gap-2 mt-1.5">
-<input id="quiz-form-eimg" type="text" placeholder="해설 이미지 URL (선택)" oninput="previewFormImg('eimg')" class="flex-1 min-w-[160px] bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:border-amber-400 focus:outline-none" />
-<label class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-[11px] font-bold text-slate-200 cursor-pointer shrink-0">
-🖼️ 해설 사진 첨부
-<input type="file" accept="image/*" onchange="handleImageUpload(event, 'eimg')" class="hidden" />
-</label>
-<button type="button" onclick="clearFormImg('eimg')" class="text-[11px] text-rose-400 hover:underline cursor-pointer">삭제</button>
-</div>
-<img id="preview-eimg" class="hidden mt-2 max-h-28 rounded border border-slate-700 object-contain" />
-</div>
-<button onclick="saveQuizFromForm()" class="btn-amber w-full py-2.5 rounded-xl font-black text-sm cursor-pointer">
-💾 퀴즈 저장하기
-</button>
-</div>
-<!-- SECTION C: EXISTING QUIZZES LIST BY ZONE (WITH ORDER & RANDOM SETTINGS) -->
-<div class="rpg-subcard rounded-xl p-4">
-<div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-<div>
-<h3 class="font-black text-sm text-slate-200">📋 3. 등록된 퀴즈 목록 및 출제 순서 관리</h3>
-<p id="order-helper-text" class="text-[11px] text-slate-400 mt-0.5">특정 탐험구역을 선택하면 해당 구역의 출제 방식(지정 순서 / 랜덤)과 퀴즈 순서를 바꿀 수 있습니다.</p>
-</div>
-<select id="admin-filter-zone" onchange="renderAdminQuizList()" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-amber-300 font-bold">
-<option value="all">전체 구역 보기</option>
-</select>
-</div>
-<!-- Zone Order Mode & Shuffle Controls (Visible when a specific zone is selected) -->
-<div id="zone-order-control-bar" class="hidden mb-3 bg-slate-900/90 border border-amber-500/40 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
-<div class="flex items-center gap-2">
-<span class="text-xs font-bold text-amber-300">🎯 출제 방식:</span>
-<button id="order-mode-seq-btn" onclick="setZoneRandomMode(false)" class="px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer">
-지정 순서대로
-</button>
-<button id="order-mode-rnd-btn" onclick="setZoneRandomMode(true)" class="px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer">
-🎲 랜덤 출제
-</button>
-</div>
-<button onclick="shuffleZoneQuizzesOrder()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-xs font-bold cursor-pointer">
-🔀 목록 순서 무작위 섞기
-</button>
-</div>
-<div id="admin-quiz-list" class="space-y-2.5">
-<!-- Populated by JS -->
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- ==================== MODAL 3: DUNGEON CLEAR & LEVEL UP REWARD ==================== -->
-<div id="result-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4">
-<div class="rpg-card w-full max-w-md rounded-2xl p-6 text-center border-2 border-amber-400 shadow-[0_0_40px_rgba(245,158,11,0.35)]">
-<div id="res-icon" class="text-5xl mb-3">🏆</div>
-<h2 id="res-title" class="font-black text-2xl text-amber-300 mb-1">던전 탐험 완료!</h2>
-<p id="res-subtitle" class="text-xs sm:text-sm text-slate-300 mb-4">모든 괴물을 물리치고 베이스캠프로 귀환합니다.</p>
-<div class="rpg-subcard rounded-xl p-3.5 mb-4 space-y-2 text-left">
-<div class="flex justify-between text-xs sm:text-sm">
-<span class="text-slate-400">처치한 괴물 (정답 수)</span>
-<span id="res-correct" class="font-bold text-emerald-400">5 / 5 마리</span>
-</div>
-<div class="flex justify-between text-xs sm:text-sm">
-<span class="text-slate-400">획득 경험치</span>
-<span id="res-exp" class="font-retro font-bold text-amber-400">+125 EXP</span>
-</div>
-</div>
-<!-- Level Up Reward Box -->
-<div id="res-levelup-box" class="hidden bg-gradient-to-b from-amber-950/90 to-slate-900 border border-amber-400 rounded-xl p-3.5 mb-4">
-<div class="font-retro text-xs text-amber-300 tracking-widest mb-1">✨ LEVEL UP! ✨</div>
-<div id="res-new-level" class="font-black text-lg text-white mb-2">LV.2 달성!</div>
-<div id="res-rewards-list" class="space-y-1.5 text-xs">
-<!-- Unlocked gear injected here -->
-</div>
-</div>
-<button onclick="finishDungeonAndGoHome()" class="btn-amber w-full py-3 rounded-xl font-black text-base cursor-pointer">
-⛺ 베이스캠프로 귀환
-</button>
-</div>
-</div>
-<!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
-<script>
-// ==========================================
-// 1. CONSTANTS & REWARD PROGRESSION TABLE
-// ==========================================
-const ADMIN_PIN = "601090";
-const STORAGE_KEY_QUIZ_DATA = "dungeon_quiz_rpg_permanent_v1";
-const SESSION_KEY_PLAYER = "dungeon_quiz_rpg_session_v1";
-// Level-up Equipment Rewards (Alternating Weapons & Armor/Shields)
-const LEVEL_REWARDS = [
-{ level: 1, type: "weapon", name: "녹슨 단검", desc: "기본 지급 단검", bonusHp: 0, bonusDef: 0 },
-{ level: 1, type: "armor",  name: "천 망토",   desc: "기본 방어구",     bonusHp: 0, bonusDef: 0 },
-{ level: 2, type: "weapon", name: "청동 장검", desc: "최대 HP +15",     bonusHp: 15, bonusDef: 0 },
-{ level: 3, type: "armor",  name: "가죽 흉갑 & 방패", desc: "피해 감소 +2 DMG", bonusHp: 0, bonusDef: 2 },
-{ level: 4, type: "weapon", name: "강철 대검", desc: "최대 HP +25",     bonusHp: 25, bonusDef: 0 },
-{ level: 5, type: "armor",  name: "미스릴 사슬갑옷", desc: "피해 감소 +4 DMG", bonusHp: 0, bonusDef: 4 },
-{ level: 6, type: "weapon", name: "화염의 마검", desc: "최대 HP +40",   bonusHp: 40, bonusDef: 0 },
-{ level: 7, type: "armor",  name: "성기사의 방어막", desc: "피해 감소 +6 DMG", bonusHp: 0, bonusDef: 6 },
-{ level: 8, type: "weapon", name: "전설의 엑스칼리버", desc: "최대 HP +60", bonusHp: 60, bonusDef: 0 },
-{ level: 9, type: "armor",  name: "드래곤 비늘 갑옷", desc: "피해 감소 +8 DMG", bonusHp: 0, bonusDef: 8 }
-];
-// Pixel Monster Sprites for Dungeon Battles
-const MONSTERS = [
-{
-name: "지식의 슬라임",
-svg: ⁠<svg class="w-20 h-20 sm:w-24 sm:h-24 pixel-art" viewBox="0 0 16 16" fill="none"> <rect x="5" y="4" width="6" height="2" fill="#38bdf8"/> <rect x="3" y="6" width="10" height="3" fill="#0284c7"/> <rect x="2" y="9" width="12" height="4" fill="#0369a1"/> <rect x="3" y="13" width="10" height="1" fill="#0c4a6e"/> <rect x="5" y="8" width="2" height="2" fill="#ffffff"/> <rect x="9" y="8" width="2" height="2" fill="#ffffff"/> <rect x="6" y="9" width="1" height="1" fill="#0f172a"/> <rect x="10" y="9" width="1" height="1" fill="#0f172a"/> </svg>⁠
-},
-{
-name: "미궁의 해골병사",
-svg: ⁠<svg class="w-20 h-20 sm:w-24 sm:h-24 pixel-art" viewBox="0 0 16 16" fill="none"> <rect x="5" y="2" width="6" height="5" fill="#e2e8f0"/> <rect x="6" y="4" width="1" height="2" fill="#0f172a"/> <rect x="9" y="4" width="1" height="2" fill="#0f172a"/> <rect x="6" y="7" width="4" height="2" fill="#cbd5e1"/> <rect x="4" y="9" width="8" height="4" fill="#94a3b8"/> <rect x="5" y="13" width="2" height="2" fill="#e2e8f0"/> <rect x="9" y="13" width="2" height="2" fill="#e2e8f0"/> </svg>⁠
-},
-{
-name: "어둠의 마법사",
-svg: ⁠<svg class="w-20 h-20 sm:w-24 sm:h-24 pixel-art" viewBox="0 0 16 16" fill="none"> <rect x="7" y="1" width="2" height="2" fill="#7e22ce"/> <rect x="5" y="3" width="6" height="2" fill="#6b21a8"/> <rect x="3" y="5" width="10" height="1" fill="#581c87"/> <rect x="5" y="6" width="6" height="3" fill="#1e1b4b"/> <rect x="6" y="7" width="1" height="1" fill="#facc15"/> <rect x="9" y="7" width="1" height="1" fill="#facc15"/> <rect x="4" y="9" width="8" height="6" fill="#581c87"/> </svg>⁠
-},
-{
-name: "고대의 수호 골렘",
-svg: ⁠<svg class="w-20 h-20 sm:w-24 sm:h-24 pixel-art" viewBox="0 0 16 16" fill="none"> <rect x="4" y="2" width="8" height="4" fill="#64748b"/> <rect x="6" y="3" width="4" height="1" fill="#ef4444"/> <rect x="2" y="6" width="12" height="6" fill="#475569"/> <rect x="6" y="7" width="4" height="4" fill="#f59e0b"/> <rect x="3" y="12" width="3" height="3" fill="#334155"/> <rect x="10" y="12" width="3" height="3" fill="#334155"/> </svg>⁠
-},
-{
-name: "심연의 드래곤",
-svg: ⁠<svg class="w-20 h-20 sm:w-24 sm:h-24 pixel-art" viewBox="0 0 16 16" fill="none"> <rect x="4" y="1" width="2" height="2" fill="#fbbf24"/> <rect x="10" y="1" width="2" height="2" fill="#fbbf24"/> <rect x="4" y="3" width="8" height="5" fill="#dc2626"/> <rect x="5" y="5" width="2" height="1" fill="#fef08a"/> <rect x="9" y="5" width="2" height="1" fill="#fef08a"/> <rect x="2" y="7" width="12" height="6" fill="#991b1b"/> <rect x="6" y="8" width="4" height="5" fill="#f97316"/> <rect x="4" y="13" width="3" height="2" fill="#7f1d1d"/> <rect x="9" y="13" width="3" height="2" fill="#7f1d1d"/> </svg>⁠
-}
-];
-// Default Sample Zones & Quizzes (used if localStorage is empty)
-const DEFAULT_QUIZ_DATA = {
-zones: [
-{ id: "zone_1", name: "지식의 미궁", randomOrder: false },
-{ id: "zone_2", name: "과학과 우주 신전", randomOrder: false }
-],
-quizzes: [
-{
-id: "q_101",
-zoneId: "zone_1",
-type: "multiple",
-question: "대한민국의 수도는 어디일까요?",
-questionImg: "",
-options: [
-{ text: "부산", img: "" },
-{ text: "서울", img: "" },
-{ text: "인천", img: "" },
-{ text: "대전", img: "" }
-],
-correctIndex: 1,
-subjectiveAnswer: "",
-explanation: "대한민국의 수도는 서울특별시입니다.",
-explanationImg: ""
-},
-{
-id: "q_102",
-zoneId: "zone_1",
-type: "multiple",
-question: "훈민정음을 창제한 조선의 임금은 누구일까요?",
-questionImg: "",
-options: [
-{ text: "태조 이성계", img: "" },
-{ text: "세종대왕", img: "" },
-{ text: "정조", img: "" }
-],
-correctIndex: 1,
-subjectiveAnswer: "",
-explanation: "세종대왕은 1443년 훈민정음을 창제하고 1446년에 반포하였습니다.",
-explanationImg: ""
-},
-{
-id: "q_103",
-zoneId: "zone_1",
-type: "subjective",
-question: "1년 중 낮의 길이가 가장 긴 절기를 무엇이라고 할까요? (두 글자)",
-questionImg: "",
-options: [],
-correctIndex: 0,
-subjectiveAnswer: "하지",
-explanation: "하지(夏至)는 24절기 중 하나로 북반구에서 낮이 가장 긴 날입니다.",
-explanationImg: ""
-},
-{
-id: "q_104",
-zoneId: "zone_1",
-type: "multiple",
-question: "세계에서 가장 넓은 대양은 무엇일까요?",
-questionImg: "",
-options: [
-{ text: "대서양", img: "" },
-{ text: "인도양", img: "" },
-{ text: "태평양", img: "" },
-{ text: "북극해", img: "" }
-],
-correctIndex: 2,
-subjectiveAnswer: "",
-explanation: "태평양은 지구 표면의 약 3분의 1을 차지하는 가장 큰 바다입니다.",
-explanationImg: ""
-},
-{
-id: "q_105",
-zoneId: "zone_1",
-type: "subjective",
-question: "물의 화학식을 알파벳과 숫자로 적어보세요. (예: CO2)",
-questionImg: "",
-options: [],
-correctIndex: 0,
-subjectiveAnswer: "H2O",
-explanation: "물은 수소 원자 2개와 산소 원자 1개가 결합한 H2O입니다.",
-explanationImg: ""
-},
-{
-id: "q_201",
-zoneId: "zone_2",
-type: "multiple",
-question: "태양계에서 가장 큰 행성은 무엇일까요?",
-questionImg: "",
-options: [
-{ text: "지구", img: "" },
-{ text: "화성", img: "" },
-{ text: "목성", img: "" },
-{ text: "토성", img: "" }
-],
-correctIndex: 2,
-subjectiveAnswer: "",
-explanation: "목성은 태양계에서 질량과 부피가 가장 큰 거대 가스 행성입니다.",
-explanationImg: ""
-},
-{
-id: "q_202",
-zoneId: "zone_2",
-type: "subjective",
-question: "식물이 빛 에너지를 이용해 양분을 만드는 과정을 무엇이라 할까요? (세 글자)",
-questionImg: "",
-options: [],
-correctIndex: 0,
-subjectiveAnswer: "광합성",
-explanation: "식물은 엽록체에서 빛, 물, 이산화탄소를 이용해 광합성을 합니다.",
-explanationImg: ""
-}
-]
-};
-// ==========================================
-// 2. APPLICATION STATE
-// ==========================================
-let quizData = { zones: [], quizzes: [] };
-// Session-only player state (resets on tab close / reload)
-let playerState = {
-level: 1,
-exp: 0,
-clears: 0,
-selectedZoneId: "zone_1",
-wrongNotes: [],
-sfxEnabled: true,
-vfxEnabled: true
-};
-let adminUnlocked = false;
-// Active Dungeon Battle State
-let battleState = {
-active: false,
-zoneId: null,
-zoneName: "",
-queue: [],
-currentIndex: 0,
-currentHp: 100,
-maxHp: 100,
-def: 0,
-correctCount: 0,
-answeredCurrent: false
-};
-// Admin Dynamic Options Editor State
-let adminDraftOptions = [{ text: "", img: "", isCorrect: true }];
-// ==========================================
-// 3. WEB AUDIO RETRO SYNTHESIZER (NO EXTERNAL URLS)
-// ==========================================
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let audioCtx = null;
-function playTone(freq, type, duration, delay = 0, vol = 0.12) {
-if (!playerState.sfxEnabled) return;
-try {
-if (!audioCtx) audioCtx = new AudioCtx();
-if (audioCtx.state === "suspended") audioCtx.resume();
-const osc = audioCtx.createOscillator();
-const gain = audioCtx.createGain();
-osc.type = type;
-osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
-gain.gain.setValueAtTime(vol, audioCtx.currentTime + delay);
-gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + delay + duration);
-osc.connect(gain);
-gain.connect(audioCtx.destination);
-osc.start(audioCtx.currentTime + delay);
-osc.stop(audioCtx.currentTime + delay + duration);
-} catch (e) {
-// Ignore audio errors if blocked
-}
-}
-const SFX = {
-click: () => playTone(520, "square", 0.06, 0, 0.07),
-attack: () => {
-playTone(320, "sawtooth", 0.08, 0, 0.12);
-playTone(640, "square", 0.14, 0.06, 0.12);
-},
-damage: () => {
-playTone(150, "sawtooth", 0.15, 0, 0.16);
-playTone(105, "square", 0.2, 0.08, 0.16);
-},
-levelUp: () => {
-playTone(523.25, "square", 0.1, 0, 0.12);
-playTone(659.25, "square", 0.1, 0.1, 0.12);
-playTone(783.99, "square", 0.1, 0.2, 0.12);
-playTone(1046.5, "square", 0.3, 0.3, 0.14);
-},
-clear: () => {
-playTone(440, "triangle", 0.12, 0, 0.14);
-playTone(554.37, "triangle", 0.12, 0.12, 0.14);
-playTone(659.25, "triangle", 0.28, 0.24, 0.15);
-}
-};
-// ==========================================
-// 4. STORAGE & INITIALIZATION
-// ==========================================
-function loadAllData() {
-// 1. Load Permanent Quiz Data (localStorage)
-try {
-const saved = localStorage.getItem(STORAGE_KEY_QUIZ_DATA);
-if (saved) {
-const parsed = JSON.parse(saved);
-if (parsed && Array.isArray(parsed.zones) && Array.isArray(parsed.quizzes)) {
-quizData = parsed;
-quizData.zones.forEach(z => {
-if (typeof z.randomOrder !== "boolean") z.randomOrder = false;
-});
-} else {
-quizData = JSON.parse(JSON.stringify(DEFAULT_QUIZ_DATA));
-saveQuizData();
-}
-} else {
-quizData = JSON.parse(JSON.stringify(DEFAULT_QUIZ_DATA));
-saveQuizData();
-}
-} catch (e) {
-quizData = JSON.parse(JSON.stringify(DEFAULT_QUIZ_DATA));
-}
-// 2. Load Session Player State (sessionStorage - resets when tab/browser closes)
-try {
-const sess = sessionStorage.getItem(SESSION_KEY_PLAYER);
-if (sess) {
-playerState = { ...playerState, ...JSON.parse(sess) };
-}
-} catch (e) {}
-if (quizData.zones.length > 0 && !quizData.zones.some(z => z.id === playerState.selectedZoneId)) {
-playerState.selectedZoneId = quizData.zones[0].id;
-}
-renderHomeScreen();
-}
-function saveQuizData() {
-try {
-localStorage.setItem(STORAGE_KEY_QUIZ_DATA, JSON.stringify(quizData));
-} catch (e) {
-showToast("⚠️ 저장 공간이 부족합니다. 이미지 크기를 줄여주세요.", "rose");
-}
-}
-function saveSessionState() {
-try {
-sessionStorage.setItem(SESSION_KEY_PLAYER, JSON.stringify(playerState));
-} catch (e) {}
-}
-// ==========================================
-// 5. PLAYER STATS & EQUIPMENT CALCULATIONS
-// ==========================================
-function getPlayerStats() {
-let maxHp = 100;
-let def = 0;
-let currentWeapon = LEVEL_REWARDS[0];
-let currentArmor = LEVEL_REWARDS[1];
-const unlocked = [];
-LEVEL_REWARDS.forEach(item => {
-if (playerState.level >= item.level) {
-unlocked.push(item);
-maxHp += item.bonusHp;
-def += item.bonusDef;
-if (item.type === "weapon") currentWeapon = item;
-if (item.type === "armor") currentArmor = item;
-}
-});
-const expNeeded = playerState.level * 100;
-return { maxHp, def, currentWeapon, currentArmor, unlocked, expNeeded };
-}
-function renderHomeScreen() {
-const stats = getPlayerStats();
-// Header Level & EXP
-document.getElementById("hdr-level").textContent = ⁠LV.${playerState.level}⁠;
-const expPct = Math.min(100, Math.round((playerState.exp / stats.expNeeded) * 100));
-document.getElementById("hdr-exp-bar").style.width = ⁠${expPct}%⁠;
-document.getElementById("hdr-exp-text").textContent = ⁠EXP ${playerState.exp} / ${stats.expNeeded}⁠;
-// Wrong Note Badge
-const badge = document.getElementById("wrong-badge");
-if (playerState.wrongNotes.length > 0) {
-badge.textContent = playerState.wrongNotes.length;
-badge.classList.remove("hidden");
-} else {
-badge.classList.add("hidden");
-}
-// SFX Status
-const sfxEl = document.getElementById("hdr-sfx-status");
-sfxEl.textContent = playerState.sfxEnabled ? "SFX: ON" : "SFX: OFF";
-sfxEl.className = ⁠font-retro text-[11px] mt-0.5 ${playerState.sfxEnabled ? "text-emerald-400" : "text-slate-500"}⁠;
-// Stats Bar
-document.getElementById("stat-hp").textContent = ⁠${stats.maxHp} / ${stats.maxHp}⁠;
-document.getElementById("stat-def").textContent = ⁠-${stats.def} DMG⁠;
-document.getElementById("stat-weapon").textContent = stats.currentWeapon.name;
-document.getElementById("stat-armor").textContent = stats.currentArmor.name;
-// Zone Selector Dropdown
-const zoneSelect = document.getElementById("zone-select");
-zoneSelect.innerHTML = "";
-if (quizData.zones.length === 0) {
-const opt = document.createElement("option");
-opt.value = "";
-opt.textContent = "등록된 탐험구역 없음";
-zoneSelect.appendChild(opt);
-} else {
-quizData.zones.forEach(z => {
-const count = quizData.quizzes.filter(q => q.zoneId === z.id).length;
-const modeTag = z.randomOrder ? " · 랜덤" : "";
-const opt = document.createElement("option");
-opt.value = z.id;
-opt.textContent = ⁠${z.name} (${count}층${modeTag})⁠;
-if (z.id === playerState.selectedZoneId) opt.selected = true;
-zoneSelect.appendChild(opt);
-});
-}
-}
-function onSelectZone() {
-SFX.click();
-playerState.selectedZoneId = document.getElementById("zone-select").value;
-saveSessionState();
-}
-function showFriendComingSoon() {
-SFX.click();
-showToast("🤝 친구 초대 및 파티 동행 시스템은 곧 업데이트될 예정입니다!", "amber");
-}
-// ==========================================
-// 6. DUNGEON EXPLORATION & QUIZ COMBAT
-// ==========================================
-function shuffleArray(arr) {
-const copy = [...arr];
-for (let i = copy.length - 1; i > 0; i--) {
-const j = Math.floor(Math.random() * (i + 1));
-[copy[i], copy[j]] = [copy[j], copy[i]];
-}
-return copy;
-}
-function startDungeonRun() {
-SFX.click();
-const zoneId = document.getElementById("zone-select").value;
-const zone = quizData.zones.find(z => z.id === zoneId);
-if (!zone) {
-showToast("탐험할 구역을 먼저 선택해주세요!", "rose");
-return;
-}
-const zoneQuizzes = quizData.quizzes.filter(q => q.zoneId === zoneId);
-if (zoneQuizzes.length === 0) {
-showToast(⁠'${zone.name}'에 등록된 퀴즈가 없습니다. 관리자 메뉴에서 퀴즈를 추가해주세요!⁠, "amber");
-return;
-}
-const clonedQuizzes = JSON.parse(JSON.stringify(zoneQuizzes));
-const runQueue = zone.randomOrder ? shuffleArray(clonedQuizzes) : clonedQuizzes;
-const stats = getPlayerStats();
-battleState = {
-active: true,
-zoneId: zone.id,
-zoneName: zone.name,
-queue: runQueue,
-currentIndex: 0,
-currentHp: stats.maxHp,
-maxHp: stats.maxHp,
-def: stats.def,
-correctCount: 0,
-answeredCurrent: false
-};
-document.getElementById("home-view").classList.add("hidden");
-document.getElementById("battle-view").classList.remove("hidden");
-document.getElementById("battle-view").classList.add("flex");
-renderBattleStage();
-}
-function renderBattleStage() {
-const total = battleState.queue.length;
-const idx = battleState.currentIndex;
-const quiz = battleState.queue[idx];
-const monster = MONSTERS[idx % MONSTERS.length];
-document.getElementById("battle-zone-name").textContent = battleState.zoneName;
-document.getElementById("battle-stage-text").textContent = ⁠STAGE ${idx + 1} / ${total}⁠;
-document.getElementById("btl-lvl").textContent = playerState.level;
-updateBattleHPUI();
-// Monster UI
-document.getElementById("btl-monster-name").textContent = monster.name;
-document.getElementById("btl-monster-hp-text").textContent = "100%";
-document.getElementById("btl-monster-hp-bar").style.width = "100%";
-document.getElementById("battle-monster-sprite").innerHTML = monster.svg;
-document.getElementById("battle-monster-sprite").style.opacity = "1";
-// Quiz UI
-battleState.answeredCurrent = false;
-document.getElementById("quiz-type-badge").textContent = quiz.type === "multiple" ? "객관식" : "주관식";
-document.getElementById("quiz-exp-reward").textContent = "25";
-document.getElementById("quiz-question-text").textContent = quiz.question;
-const qImgWrap = document.getElementById("quiz-question-img-wrap");
-const qImg = document.getElementById("quiz-question-img");
-if (quiz.questionImg && quiz.questionImg.trim() !== "") {
-qImg.src = quiz.questionImg;
-qImgWrap.classList.remove("hidden");
-} else {
-qImgWrap.classList.add("hidden");
-}
-// Reset Feedback
-const fbBox = document.getElementById("quiz-feedback-box");
-fbBox.classList.add("hidden");
-// Render Answer Area
-const ansArea = document.getElementById("quiz-answer-area");
-ansArea.innerHTML = "";
-if (quiz.type === "multiple") {
-quiz.options.forEach((opt, oIdx) => {
-const btn = document.createElement("button");
-btn.className = "option-btn w-full text-left bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-amber-400/80 rounded-xl p-3 sm:p-3.5 transition-all flex items-center gap-3 cursor-pointer";
-btn.onclick = () => submitMultipleChoice(oIdx);
-const numBadge = ⁠<span class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-600 font-retro text-xs font-bold text-amber-300 flex items-center justify-center shrink-0">${oIdx + 1}</span>⁠;
-const optText = ⁠<span class="text-sm sm:text-base font-medium text-slate-100 flex-1">${escapeHTML(opt.text)}</span>⁠;
-const optImg = opt.img ? ⁠<img src="${escapeHTML(opt.img)}" alt="보기 이미지" class="max-h-16 rounded border border-slate-700 object-contain bg-slate-950" />⁠ : "";
-btn.innerHTML = ⁠${numBadge}<div class="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-2">${optText}${optImg}</div>⁠;
-ansArea.appendChild(btn);
-});
-} else {
-// Subjective Input
-ansArea.innerHTML = ⁠<div class="flex flex-col sm:flex-row gap-2"> <input id="subjective-input" type="text" placeholder="정답을 입력하세요..." onkeydown="if(event.key==='Enter') submitSubjectiveAnswer()" class="flex-1 bg-slate-950 border border-slate-600 focus:border-amber-400 rounded-xl px-4 py-3 text-sm sm:text-base text-white font-bold focus:outline-none" /> <button id="subjective-submit-btn" onclick="submitSubjectiveAnswer()" class="btn-amber px-6 py-3 rounded-xl font-black text-sm sm:text-base cursor-pointer shrink-0"> ⚔️ 공격 (제출) </button> </div>⁠;
-setTimeout(() => {
-const inp = document.getElementById("subjective-input");
-if (inp) inp.focus();
-}, 50);
-}
-}
-function updateBattleHPUI() {
-const pct = Math.max(0, Math.round((battleState.currentHp / battleState.maxHp) * 100));
-document.getElementById("btl-hp-text").textContent = ⁠${battleState.currentHp}/${battleState.maxHp}⁠;
-document.getElementById("btl-hp-bar").style.width = ⁠${pct}%⁠;
-}
-function submitMultipleChoice(selectedIndex) {
-if (battleState.answeredCurrent) return;
-const quiz = battleState.queue[battleState.currentIndex];
-const isCorrect = selectedIndex === quiz.correctIndex;
-const userText = quiz.options[selectedIndex] ? quiz.options[selectedIndex].text : "선택 없음";
-const correctText = quiz.options[quiz.correctIndex] ? quiz.options[quiz.correctIndex].text : "";
-// Highlight options
-const buttons = document.querySelectorAll(".option-btn");
-buttons.forEach((btn, i) => {
-btn.disabled = true;
-btn.classList.remove("hover:bg-slate-800", "hover:border-amber-400/80");
-if (i === quiz.correctIndex) {
-btn.classList.add("!border-emerald-400", "!bg-emerald-950/70");
-} else if (i === selectedIndex && !isCorrect) {
-btn.classList.add("!border-rose-500", "!bg-rose-950/70");
-} else {
-btn.classList.add("opacity-50");
-}
-});
-resolveBattleTurn(isCorrect, userText, correctText);
-}
-function submitSubjectiveAnswer() {
-if (battleState.answeredCurrent) return;
-const inp = document.getElementById("subjective-input");
-const btn = document.getElementById("subjective-submit-btn");
-const userVal = (inp.value || "").trim();
-if (!userVal) {
-showToast("정답을 입력해주세요!", "amber");
-return;
-}
-inp.disabled = true;
-btn.disabled = true;
-const quiz = battleState.queue[battleState.currentIndex];
-const normalize = s => s.replace(/\s+/g, "").toLowerCase();
-const isCorrect = normalize(userVal) === normalize(quiz.subjectiveAnswer);
-resolveBattleTurn(isCorrect, userVal, quiz.subjectiveAnswer);
-}
-function resolveBattleTurn(isCorrect, userAnswerText, correctAnswerText) {
-battleState.answeredCurrent = true;
-const quiz = battleState.queue[battleState.currentIndex];
-const fbBox = document.getElementById("quiz-feedback-box");
-const fbTitle = document.getElementById("quiz-feedback-title");
-const fbDetail = document.getElementById("quiz-feedback-detail");
-const eImgWrap = document.getElementById("quiz-explanation-img-wrap");
-const eImg = document.getElementById("quiz-explanation-img");
-fbBox.classList.remove("hidden", "bg-emerald-950/60", "border-emerald-500/60", "bg-rose-950/60", "border-rose-500/60");
-if (isCorrect) {
-// Player attacks & defeats monster!
-SFX.attack();
-battleState.correctCount++;
-const heroEl = document.getElementById("battle-hero-sprite");
-heroEl.classList.add("animate-slash");
-setTimeout(() => heroEl.classList.remove("animate-slash"), 450);
-document.getElementById("btl-monster-hp-text").textContent = "0%";
-document.getElementById("btl-monster-hp-bar").style.width = "0%";
-document.getElementById("battle-monster-sprite").style.opacity = "0.25";
-fbBox.classList.add("bg-emerald-950/60", "border-emerald-500/60");
-fbTitle.className = "font-black text-sm sm:text-base mb-1 text-emerald-300";
-fbTitle.textContent = "⚔️ 정답입니다! 괴물을 처치했습니다!";
-fbDetail.textContent = quiz.explanation ? ⁠해설: ${quiz.explanation}⁠ : ⁠정답: ${correctAnswerText}⁠;
-} else {
-// Monster hits player (-10 HP mitigated by Damage Reduction)
-SFX.damage();
-const dmgTaken = Math.max(1, 10 - battleState.def);
-battleState.currentHp = Math.max(0, battleState.currentHp - dmgTaken);
-updateBattleHPUI();
-if (playerState.vfxEnabled) {
-const arena = document.getElementById("battle-arena");
-arena.classList.add("animate-shake", "flash-red");
-setTimeout(() => arena.classList.remove("animate-shake", "flash-red"), 450);
-}
-// Record in Session Wrong Answer Note
-playerState.wrongNotes.unshift({
-zoneName: battleState.zoneName,
-question: quiz.question,
-questionImg: quiz.questionImg || "",
-userAnswer: userAnswerText,
-correctAnswer: correctAnswerText,
-explanation: quiz.explanation || "",
-explanationImg: quiz.explanationImg || "",
-timestamp: new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })
-});
-saveSessionState();
-fbBox.classList.add("bg-rose-950/60", "border-rose-500/60");
-fbTitle.className = "font-black text-sm sm:text-base mb-1 text-rose-300";
-fbTitle.textContent = ⁠💥 오답! 괴물의 반격으로 체력 -${dmgTaken} 감소!⁠;
-fbDetail.textContent = ⁠내 답안: ${userAnswerText} | 정답: ${correctAnswerText}${quiz.explanation ? ⁠\n해설: ${quiz.explanation}⁠ : ""}⁠;
-}
-if (quiz.explanationImg && quiz.explanationImg.trim() !== "") {
-eImg.src = quiz.explanationImg;
-eImgWrap.classList.remove("hidden");
-} else {
-eImgWrap.classList.add("hidden");
-}
-const nextBtn = document.getElementById("next-stage-btn");
-if (battleState.currentHp <= 0) {
-nextBtn.textContent = "💀 체력 고갈... 베이스캠프로 후퇴";
-} else if (battleState.currentIndex + 1 >= battleState.queue.length) {
-nextBtn.textContent = "🏆 던전 탐험 완료 보상 받기";
-} else {
-nextBtn.textContent = "다음 층으로 전진 ➔";
-}
-}
-function proceedNextStage() {
-SFX.click();
-// Defeated if HP reached 0
-if (battleState.currentHp <= 0) {
-showToast("💀 체력이 모두 소진되어 탐험에 실패했습니다. 다시 도전해보세요!", "rose");
-abortBattleToHome();
-return;
-}
-battleState.currentIndex++;
-if (battleState.currentIndex < battleState.queue.length) {
-renderBattleStage();
-} else {
-completeDungeonRun();
-}
-}
-// Mid-run exit: resets progress for this run so next start begins at floor 1
-function confirmRetreat() {
-SFX.click();
-showToast("🏃 탐험을 중도 포기했습니다. 다음 도전 시 1층부터 다시 시작합니다.", "amber");
-abortBattleToHome();
-}
-function abortBattleToHome() {
-battleState.active = false;
-document.getElementById("battle-view").classList.add("hidden");
-document.getElementById("battle-view").classList.remove("flex");
-document.getElementById("home-view").classList.remove("hidden");
-renderHomeScreen();
-}
-// Full Dungeon Clear -> Grant EXP & Level-Up Rewards
-function completeDungeonRun() {
-const gainedExp = battleState.correctCount * 25;
-const oldLevel = playerState.level;
-playerState.exp += gainedExp;
-playerState.clears += 1;
-const unlockedThisRun = [];
-while (playerState.exp >= playerState.level * 100) {
-playerState.exp -= playerState.level * 100;
-playerState.level += 1;
-const reward = LEVEL_REWARDS.find(r => r.level === playerState.level);
-if (reward) unlockedThisRun.push(reward);
-}
-saveSessionState();
-// Populate Result Modal
-document.getElementById("res-correct").textContent = ⁠${battleState.correctCount} / ${battleState.queue.length} 마리⁠;
-document.getElementById("res-exp").textContent = ⁠+${gainedExp} EXP⁠;
-const lvlBox = document.getElementById("res-levelup-box");
-if (playerState.level > oldLevel) {
-SFX.levelUp();
-lvlBox.classList.remove("hidden");
-document.getElementById("res-new-level").textContent = ⁠LV.${oldLevel} ➔ LV.${playerState.level} 달성!⁠;
-const rList = document.getElementById("res-rewards-list");
-if (unlockedThisRun.length > 0) {
-rList.innerHTML = unlockedThisRun.map(item => ⁠<div class="bg-slate-950/80 border border-amber-500/40 rounded-lg p-2 flex items-center justify-between"> <span class="font-bold text-amber-300">${item.type === "weapon" ? "🗡️" : "🛡️"} ${item.name}</span> <span class="text-emerald-300 font-retro">${item.desc}</span> </div>⁠).join("");
-} else {
-rList.innerHTML = ⁠<div class="text-amber-200">기본 능력치가 더욱 강해졌습니다!</div>⁠;
-}
-} else {
-SFX.clear();
-lvlBox.classList.add("hidden");
-}
-document.getElementById("result-modal").classList.remove("hidden");
-document.getElementById("result-modal").classList.add("flex");
-}
-function finishDungeonAndGoHome() {
-SFX.click();
-closeModal("result-modal");
-abortBattleToHome();
-}
-// ==========================================
-// 7. JOURNAL & WRONG ANSWER NOTE MODAL
-// ==========================================
-function openJournalModal() {
-SFX.click();
-const stats = getPlayerStats();
-document.getElementById("jnl-level").textContent = ⁠LV.${playerState.level}⁠;
-document.getElementById("jnl-clears").textContent = playerState.clears;
-document.getElementById("jnl-exp-text").textContent = ⁠EXP ${playerState.exp} / ${stats.expNeeded}⁠;
-const expPct = Math.min(100, Math.round((playerState.exp / stats.expNeeded) * 100));
-document.getElementById("jnl-exp-bar").style.width = ⁠${expPct}%⁠;
-// Render Unlocked Gear
-const gearList = document.getElementById("jnl-gear-list");
-gearList.innerHTML = stats.unlocked.map(g => ⁠<div class="rpg-subcard rounded-lg p-2.5 flex items-center justify-between border-slate-700"> <div class="flex items-center gap-2"> <span>${g.type === "weapon" ? "🗡️" : "🛡️"}</span> <div> <div class="text-xs font-bold text-slate-100">${g.name}</div> <div class="text-[10px] text-slate-400">LV.${g.level} 해금 • ${g.desc}</div> </div> </div> <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/30">보유중</span> </div>⁠).join("");
-// Render Wrong Answer Notes
-document.getElementById("jnl-wrong-count").textContent = playerState.wrongNotes.length;
-const wrongList = document.getElementById("jnl-wrong-list");
-if (playerState.wrongNotes.length === 0) {
-wrongList.innerHTML = ⁠<div class="rpg-subcard rounded-xl p-6 text-center text-xs text-slate-400"> 아직 틀린 문제가 없습니다. 완벽한 모험을 이어가세요! ✨ </div>⁠;
-} else {
-wrongList.innerHTML = playerState.wrongNotes.map((w, idx) => ⁠<div class="rpg-subcard rounded-xl p-3.5 border-rose-500/30 space-y-2"> <div class="flex items-center justify-between text-[11px]"> <span class="font-bold text-amber-300">[${escapeHTML(w.zoneName)}]</span> <span class="text-slate-500">${w.timestamp}</span> </div> <div class="text-xs sm:text-sm font-bold text-white whitespace-pre-wrap">${idx + 1}. ${escapeHTML(w.question)}</div> ${w.questionImg ?⁠<img src="${escapeHTML(w.questionImg)}" class="max-h-32 rounded border border-slate-700 object-contain" />⁠: ""} <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1"> <div class="bg-rose-950/50 border border-rose-500/30 rounded-lg p-2 text-rose-200"> <span class="font-bold">❌ 내 답:</span> ${escapeHTML(w.userAnswer)} </div> <div class="bg-emerald-950/50 border border-emerald-500/30 rounded-lg p-2 text-emerald-200"> <span class="font-bold">⭕ 정답:</span> ${escapeHTML(w.correctAnswer)} </div> </div> ${w.explanation ?⁠<div class="text-xs text-slate-300 bg-slate-900/90 rounded-lg p-2.5 border border-slate-700/80">💡 ${escapeHTML(w.explanation)}</div>⁠: ""} ${w.explanationImg ?⁠<img src="${escapeHTML(w.explanationImg)}" class="max-h-32 rounded border border-slate-700 object-contain" />⁠: ""} </div>⁠).join("");
-}
-document.getElementById("journal-modal").classList.remove("hidden");
-document.getElementById("journal-modal").classList.add("flex");
-}
-// ==========================================
-// 8. SETTINGS & ADMIN MANAGER (PIN: 601090)
-// ==========================================
-function openSettingsModal() {
-SFX.click();
-updateSettingsTogglesUI();
-switchSettingsTab("general");
-document.getElementById("settings-modal").classList.remove("hidden");
-document.getElementById("settings-modal").classList.add("flex");
-}
-function closeModal(id) {
-document.getElementById(id).classList.add("hidden");
-document.getElementById(id).classList.remove("flex");
-}
-function switchSettingsTab(tab) {
-SFX.click();
-const genBtn = document.getElementById("tab-btn-general");
-const admBtn = document.getElementById("tab-btn-admin");
-const genTab = document.getElementById("settings-tab-general");
-const admTab = document.getElementById("settings-tab-admin");
-if (tab === "general") {
-genBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-amber-500 text-slate-950 cursor-pointer";
-admBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer";
-genTab.classList.remove("hidden");
-admTab.classList.add("hidden");
-} else {
-admBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-amber-500 text-slate-950 cursor-pointer";
-genBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer";
-genTab.classList.add("hidden");
-admTab.classList.remove("hidden");
-if (adminUnlocked) {
-showAdminDashboard();
-} else {
-document.getElementById("admin-lock-screen").classList.remove("hidden");
-document.getElementById("admin-dashboard").classList.add("hidden");
-document.getElementById("admin-pin-input").value = "";
-document.getElementById("admin-pin-error").classList.add("hidden");
-setTimeout(() => document.getElementById("admin-pin-input").focus(), 50);
-}
-}
-}
-function toggleSFX() {
-playerState.sfxEnabled = !playerState.sfxEnabled;
-saveSessionState();
-if (playerState.sfxEnabled) SFX.click();
-updateSettingsTogglesUI();
-renderHomeScreen();
-}
-function toggleVFX() {
-SFX.click();
-playerState.vfxEnabled = !playerState.vfxEnabled;
-saveSessionState();
-updateSettingsTogglesUI();
-}
-function updateSettingsTogglesUI() {
-const sfxBtn = document.getElementById("toggle-sfx-btn");
-sfxBtn.textContent = playerState.sfxEnabled ? "ON" : "OFF";
-sfxBtn.className = ⁠px-4 py-2 rounded-lg font-retro text-xs font-bold cursor-pointer ${playerState.sfxEnabled ? "bg-emerald-600 text-white" : "bg-slate-700 text-slate-300"}⁠;
-const vfxBtn = document.getElementById("toggle-vfx-btn");
-vfxBtn.textContent = playerState.vfxEnabled ? "ON" : "OFF";
-vfxBtn.className = ⁠px-4 py-2 rounded-lg font-retro text-xs font-bold cursor-pointer ${playerState.vfxEnabled ? "bg-emerald-600 text-white" : "bg-slate-700 text-slate-300"}⁠;
-}
-function resetSessionProgress() {
-SFX.click();
-playerState.level = 1;
-playerState.exp = 0;
-playerState.clears = 0;
-playerState.wrongNotes = [];
-saveSessionState();
-renderHomeScreen();
-showToast("🔄 플레이 기록이 LV.1로 초기화되었습니다.", "amber");
-}
-// Verify Admin Password (601090)
-function verifyAdminPin() {
-const val = document.getElementById("admin-pin-input").value.trim();
-if (val === ADMIN_PIN) {
-SFX.levelUp();
-adminUnlocked = true;
-showAdminDashboard();
-} else {
-SFX.damage();
-document.getElementById("admin-pin-error").classList.remove("hidden");
-}
-}
-function showAdminDashboard() {
-document.getElementById("admin-lock-screen").classList.add("hidden");
-document.getElementById("admin-dashboard").classList.remove("hidden");
-renderAdminZones();
-resetQuizForm();
-renderAdminQuizList();
-}
-// ==========================================
-// 9. ADMIN: DUNGEON ZONES CRUD
-// ==========================================
-function renderAdminZones() {
-const list = document.getElementById("admin-zone-list");
-const formZoneSel = document.getElementById("quiz-form-zone");
-const filterZoneSel = document.getElementById("admin-filter-zone");
-const prevFormZone = formZoneSel.value;
-const prevFilterZone = filterZoneSel.value;
-list.innerHTML = "";
-formZoneSel.innerHTML = "";
-filterZoneSel.innerHTML = ⁠<option value="all">전체 구역 보기 (${quizData.quizzes.length})</option>⁠;
-quizData.zones.forEach(z => {
-const qCount = quizData.quizzes.filter(q => q.zoneId === z.id).length;
-// Zone Row
-const row = document.createElement("div");
-row.className = "flex items-center gap-2 bg-slate-950/90 border border-slate-700 rounded-lg p-2";
-row.innerHTML = ⁠<input type="text" value="${escapeHTML(z.name)}" onchange="renameZone('${z.id}', this.value)" class="flex-1 bg-transparent text-xs sm:text-sm font-bold text-amber-300 px-2 py-1 rounded focus:bg-slate-900 focus:outline-none border border-transparent focus:border-amber-400" /> <button onclick="toggleZoneRandomModeFromList('${z.id}')" title="출제 방식 전환 (순서대로 / 랜덤)" class="px-2 py-1 rounded text-[11px] font-bold cursor-pointer shrink-0 ${z.randomOrder ? "bg-indigo-950 text-indigo-300 border border-indigo-500/40" : "bg-slate-800 text-slate-300 border border-slate-600"}"> ${z.randomOrder ? "🎲 랜덤출제" : "🔢 지정순서"} </button> <span class="font-retro text-[11px] text-slate-400 shrink-0">${qCount}문제</span> <button onclick="deleteZone('${z.id}')" class="px-2.5 py-1 rounded bg-rose-950 hover:bg-rose-800 text-rose-300 text-xs font-bold cursor-pointer shrink-0">삭제</button>⁠;
-list.appendChild(row);
-// Select Options
-const opt1 = new Option(⁠${z.name} (${qCount}문제)⁠, z.id);
-formZoneSel.add(opt1);
-const opt2 = new Option(⁠${z.name} (${qCount})⁠, z.id);
-filterZoneSel.add(opt2);
-});
-if (prevFormZone && quizData.zones.some(z => z.id === prevFormZone)) {
-formZoneSel.value = prevFormZone;
-}
-if (prevFilterZone) {
-filterZoneSel.value = prevFilterZone;
-}
-}
-function addZone() {
-const inp = document.getElementById("new-zone-name");
-const name = inp.value.trim();
-if (!name) {
-showToast("탐험구역 이름을 입력해주세요.", "amber");
-return;
-}
-const newZone = { id: "zone_" + Date.now(), name, randomOrder: false };
-quizData.zones.push(newZone);
-inp.value = "";
-saveQuizData();
-renderAdminZones();
-renderHomeScreen();
-showToast(⁠✅ '${name}' 탐험구역이 추가되었습니다.⁠, "emerald");
-}
-function toggleZoneRandomModeFromList(zoneId) {
-const zone = quizData.zones.find(z => z.id === zoneId);
-if (!zone) return;
-zone.randomOrder = !zone.randomOrder;
-saveQuizData();
-renderAdminZones();
-renderAdminQuizList();
-renderHomeScreen();
-showToast(⁠'${zone.name}' 출제 방식: ${zone.randomOrder ? "🎲 랜덤 출제" : "🔢 지정 순서대로"}⁠, "emerald");
-}
-function renameZone(zoneId, newName) {
-const trimmed = newName.trim();
-if (!trimmed) return;
-const zone = quizData.zones.find(z => z.id === zoneId);
-if (zone) {
-zone.name = trimmed;
-saveQuizData();
-renderAdminZones();
-renderHomeScreen();
-renderAdminQuizList();
-showToast("탐험구역 이름이 수정되었습니다.", "emerald");
-}
-}
-function deleteZone(zoneId) {
-if (quizData.zones.length <= 1) {
-showToast("최소 1개 이상의 탐험구역이 필요합니다.", "rose");
-return;
-}
-quizData.zones = quizData.zones.filter(z => z.id !== zoneId);
-quizData.quizzes = quizData.quizzes.filter(q => q.zoneId !== zoneId);
-if (playerState.selectedZoneId === zoneId) {
-playerState.selectedZoneId = quizData.zones[0].id;
-}
-saveQuizData();
-renderAdminZones();
-renderAdminQuizList();
-renderHomeScreen();
-showToast("탐험구역과 해당 구역의 퀴즈가 삭제되었습니다.", "amber");
-}
-// ==========================================
-// 10. ADMIN: DYNAMIC QUIZ CREATION & EDITING
-// ==========================================
-function resetQuizForm() {
-document.getElementById("edit-quiz-id").value = "";
-document.getElementById("quiz-form-title").textContent = "✍️ 2. 새 퀴즈 추가";
-document.getElementById("cancel-edit-btn").classList.add("hidden");
-document.getElementById("quiz-form-type").value = "multiple";
-document.getElementById("quiz-form-question").value = "";
-document.getElementById("quiz-form-qimg").value = "";
-document.getElementById("preview-qimg").classList.add("hidden");
-document.getElementById("quiz-form-explanation").value = "";
-document.getElementById("quiz-form-eimg").value = "";
-document.getElementById("preview-eimg").classList.add("hidden");
-// Default starts with 1 option + '+' button as requested!
-adminDraftOptions = [{ text: "", img: "", isCorrect: true }];
-renderAdminOptionsEditor();
-}
-function renderAdminOptionsEditor() {
-const type = document.getElementById("quiz-form-type").value;
-const container = document.getElementById("admin-options-container");
-if (type === "subjective") {
-const existingSubj = document.getElementById("quiz-form-subj-ans")?.value || "";
-container.innerHTML = ⁠<label class="block text-[11px] font-bold text-amber-300 mb-1">주관식 정답 단어/문장</label> <input id="quiz-form-subj-ans" type="text" value="${escapeHTML(existingSubj)}" placeholder="정답을 입력하세요 (띄어쓰기/대소문자 자동 보정)" class="w-full bg-slate-950 border border-amber-500/50 rounded-lg px-3 py-2 text-xs sm:text-sm text-white font-bold focus:outline-none" />⁠;
-return;
-}
-// Multiple Choice Dynamic Options (starts with 1 option + '+' button)
-let html = ⁠<div class="flex items-center justify-between mb-1.5"> <label class="text-[11px] font-bold text-amber-300">객관식 보기 설정 (정답 라디오 버튼 체크)</label> <button type="button" onclick="addDraftOption()" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs cursor-pointer flex items-center gap-1"> <span>+</span> 보기 추가 </button> </div> <div class="space-y-2">⁠;
-adminDraftOptions.forEach((opt, idx) => {
-html += ⁠<div class="bg-slate-950 border ${opt.isCorrect ? "border-emerald-500/60" : "border-slate-700"} rounded-lg p-2.5 space-y-1.5"> <div class="flex items-center gap-2"> <input type="radio" name="correct-opt-radio" ${opt.isCorrect ? "checked" : ""} onchange="setDraftCorrectOption(${idx})" title="정답으로 지정" class="w-4 h-4 accent-emerald-500 cursor-pointer shrink-0" /> <span class="font-retro text-xs text-slate-400 shrink-0">#${idx + 1}</span> <input type="text" value="${escapeHTML(opt.text)}" oninput="updateDraftOptionText(${idx}, this.value)" placeholder="보기 ${idx + 1} 내용 입력" class="flex-1 bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-white focus:border-amber-400 focus:outline-none" /> ${adminDraftOptions.length > 1 ?⁠<button type="button" onclick="removeDraftOption(${idx})" class="text-rose-400 hover:text-rose-300 text-xs font-bold px-1.5 cursor-pointer">✕</button>⁠: ""} </div> <div class="flex flex-wrap items-center gap-2 pl-6"> <input type="text" value="${escapeHTML(opt.img)}" oninput="updateDraftOptionImg(${idx}, this.value)" placeholder="보기 ${idx + 1} 이미지 URL (선택)" class="flex-1 min-w-[140px] bg-slate-900 border border-slate-800 rounded px-2 py-1 text-[11px] text-slate-300 focus:outline-none" /> <label class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-[10px] font-bold text-slate-200 cursor-pointer shrink-0"> 🖼️ 사진 <input type="file" accept="image/*" onchange="handleOptionImageUpload(event, ${idx})" class="hidden" /> </label> ${opt.img ?⁠<button type="button" onclick="updateDraftOptionImg(${idx}, ''); renderAdminOptionsEditor();" class="text-[10px] text-rose-400 cursor-pointer">삭제</button>⁠: ""} </div> ${opt.img ?⁠<img src="${escapeHTML(opt.img)}" class="ml-6 max-h-20 rounded border border-slate-700 object-contain" />⁠: ""} </div>⁠;
-});
-html += ⁠</div>⁠;
-container.innerHTML = html;
-}
-function addDraftOption() {
-adminDraftOptions.push({ text: "", img: "", isCorrect: false });
-renderAdminOptionsEditor();
-}
-function removeDraftOption(idx) {
-const wasCorrect = adminDraftOptions[idx].isCorrect;
-adminDraftOptions.splice(idx, 1);
-if (wasCorrect && adminDraftOptions.length > 0) {
-adminDraftOptions[0].isCorrect = true;
-}
-renderAdminOptionsEditor();
-}
-function setDraftCorrectOption(idx) {
-adminDraftOptions.forEach((o, i) => o.isCorrect = (i === idx));
-renderAdminOptionsEditor();
-}
-function updateDraftOptionText(idx, val) {
-adminDraftOptions[idx].text = val;
-}
-function updateDraftOptionImg(idx, val) {
-adminDraftOptions[idx].img = val;
-}
-// Image Upload Helper (resizes slightly if huge so localStorage stays healthy)
-function compressAndReadImage(file, callback) {
-const reader = new FileReader();
-reader.onload = function(e) {
-const img = new Image();
-img.onload = function() {
-const canvas = document.createElement("canvas");
-const MAX_W = 640;
-let w = img.width;
-let h = img.height;
-if (w > MAX_W) {
-h = Math.round((h * MAX_W) / w);
-w = MAX_W;
-}
-canvas.width = w;
-canvas.height = h;
-const ctx = canvas.getContext("2d");
-ctx.drawImage(img, 0, 0, w, h);
-callback(canvas.toDataURL("image/jpeg", 0.78));
-};
-img.src = e.target.result;
-};
-reader.readAsDataURL(file);
-}
-function handleImageUpload(event, targetKey) {
-const file = event.target.files[0];
-if (!file) return;
-compressAndReadImage(file, (dataUrl) => {
-document.getElementById(⁠quiz-form-${targetKey}⁠).value = dataUrl;
-previewFormImg(targetKey);
-});
-}
-function handleOptionImageUpload(event, idx) {
-const file = event.target.files[0];
-if (!file) return;
-compressAndReadImage(file, (dataUrl) => {
-adminDraftOptions[idx].img = dataUrl;
-renderAdminOptionsEditor();
-});
-}
-function previewFormImg(targetKey) {
-const val = document.getElementById(⁠quiz-form-${targetKey}⁠).value.trim();
-const preview = document.getElementById(⁠preview-${targetKey}⁠);
-if (val) {
-preview.src = val;
-preview.classList.remove("hidden");
-} else {
-preview.classList.add("hidden");
-}
-}
-function clearFormImg(targetKey) {
-document.getElementById(⁠quiz-form-${targetKey}⁠).value = "";
-document.getElementById(⁠preview-${targetKey}⁠).classList.add("hidden");
-}
-function saveQuizFromForm() {
-const editId = document.getElementById("edit-quiz-id").value;
-const zoneId = document.getElementById("quiz-form-zone").value;
-const type = document.getElementById("quiz-form-type").value;
-const question = document.getElementById("quiz-form-question").value.trim();
-const questionImg = document.getElementById("quiz-form-qimg").value.trim();
-const explanation = document.getElementById("quiz-form-explanation").value.trim();
-const explanationImg = document.getElementById("quiz-form-eimg").value.trim();
-if (!zoneId) {
-showToast("소속 탐험구역을 선택해주세요.", "rose");
-return;
-}
-if (!question) {
-showToast("문제 내용을 입력해주세요.", "rose");
-return;
-}
-let options = [];
-let correctIndex = 0;
-let subjectiveAnswer = "";
-if (type === "multiple") {
-options = adminDraftOptions
-.filter(o => o.text.trim() !== "" || o.img.trim() !== "")
-.map(o => ({ text: o.text.trim() || "(이미지 보기)", img: o.img.trim() }));
-if (options.length === 0) {
-showToast("최소 1개 이상의 보기를 입력해주세요.", "rose");
-return;
-}
-const foundCorrect = adminDraftOptions.findIndex(o => o.isCorrect);
-correctIndex = foundCorrect >= 0 && foundCorrect < options.length ? foundCorrect : 0;
-} else {
-subjectiveAnswer = (document.getElementById("quiz-form-subj-ans")?.value || "").trim();
-if (!subjectiveAnswer) {
-showToast("주관식 정답을 입력해주세요.", "rose");
-return;
-}
-}
-const quizObj = {
-id: editId || "q_" + Date.now(),
-zoneId,
-type,
-question,
-questionImg,
-options,
-correctIndex,
-subjectiveAnswer,
-explanation,
-explanationImg
-};
-if (editId) {
-const idx = quizData.quizzes.findIndex(q => q.id === editId);
-if (idx !== -1) quizData.quizzes[idx] = quizObj;
-showToast("✅ 퀴즈가 수정되었습니다!", "emerald");
-} else {
-quizData.quizzes.push(quizObj);
-showToast("✅ 새 퀴즈가 등록되었습니다!", "emerald");
-}
-saveQuizData();
-resetQuizForm();
-renderAdminZones();
-renderAdminQuizList();
-renderHomeScreen();
-}
-function setZoneRandomMode(isRandom) {
-const filterZoneId = document.getElementById("admin-filter-zone").value;
-if (filterZoneId === "all") return;
-const zone = quizData.zones.find(z => z.id === filterZoneId);
-if (!zone) return;
-zone.randomOrder = isRandom;
-saveQuizData();
-renderAdminZones();
-renderAdminQuizList();
-renderHomeScreen();
-showToast(⁠'${zone.name}' 출제 방식이 '${isRandom ? "🎲 랜덤 출제" : "🔢 지정 순서대로"}'로 설정되었습니다.⁠, "emerald");
-}
-function moveQuizOrder(quizId, direction) {
-const filterZoneId = document.getElementById("admin-filter-zone").value;
-if (filterZoneId === "all") return;
-const zoneIndices = [];
-quizData.quizzes.forEach((q, idx) => {
-if (q.zoneId === filterZoneId) zoneIndices.push(idx);
-});
-const posInZone = zoneIndices.findIndex(globalIdx => quizData.quizzes[globalIdx].id === quizId);
-if (posInZone === -1) return;
-const targetPos = posInZone + direction;
-if (targetPos < 0 || targetPos >= zoneIndices.length) return;
-const idxA = zoneIndices[posInZone];
-const idxB = zoneIndices[targetPos];
-const temp = quizData.quizzes[idxA];
-quizData.quizzes[idxA] = quizData.quizzes[idxB];
-quizData.quizzes[idxB] = temp;
-saveQuizData();
-renderAdminQuizList();
-}
-function moveQuizToExactPosition(quizId, newPosStr) {
-const filterZoneId = document.getElementById("admin-filter-zone").value;
-if (filterZoneId === "all") return;
-const zoneIndices = [];
-quizData.quizzes.forEach((q, idx) => {
-if (q.zoneId === filterZoneId) zoneIndices.push(idx);
-});
-const currentPos = zoneIndices.findIndex(globalIdx => quizData.quizzes[globalIdx].id === quizId);
-if (currentPos === -1) return;
-let targetPos = parseInt(newPosStr, 10) - 1;
-if (isNaN(targetPos)) {
-renderAdminQuizList();
-return;
-}
-targetPos = Math.max(0, Math.min(zoneIndices.length - 1, targetPos));
-if (targetPos === currentPos) {
-renderAdminQuizList();
-return;
-}
-const zoneItems = zoneIndices.map(i => quizData.quizzes[i]);
-const [movedItem] = zoneItems.splice(currentPos, 1);
-zoneItems.splice(targetPos, 0, movedItem);
-zoneIndices.forEach((globalIdx, i) => {
-quizData.quizzes[globalIdx] = zoneItems[i];
-});
-saveQuizData();
-renderAdminQuizList();
-showToast(⁠${targetPos + 1}번 위치로 이동했습니다.⁠, "emerald");
-}
-function shuffleZoneQuizzesOrder() {
-const filterZoneId = document.getElementById("admin-filter-zone").value;
-if (filterZoneId === "all") return;
-const zoneIndices = [];
-quizData.quizzes.forEach((q, idx) => {
-if (q.zoneId === filterZoneId) zoneIndices.push(idx);
-});
-if (zoneIndices.length < 2) {
-showToast("순서를 섞으려면 최소 2개 이상의 퀴즈가 필요합니다.", "amber");
-return;
-}
-const shuffled = shuffleArray(zoneIndices.map(i => quizData.quizzes[i]));
-zoneIndices.forEach((globalIdx, i) => {
-quizData.quizzes[globalIdx] = shuffled[i];
-});
-saveQuizData();
-renderAdminQuizList();
-showToast("🔀 해당 탐험구역의 퀴즈 순서가 무작위로 재배열되었습니다.", "emerald");
-}
-function renderAdminQuizList() {
-const filterZoneId = document.getElementById("admin-filter-zone").value;
-const listEl = document.getElementById("admin-quiz-list");
-const orderBar = document.getElementById("zone-order-control-bar");
-const helperText = document.getElementById("order-helper-text");
-const isZoneFiltered = filterZoneId !== "all";
-if (isZoneFiltered) {
-const zone = quizData.zones.find(z => z.id === filterZoneId);
-orderBar.classList.remove("hidden");
-helperText.textContent = "위/아래 화살표나 번호를 입력해 원하는 출제 순서를 지정하거나, 랜덤 출제로 전환할 수 있습니다.";
-const seqBtn = document.getElementById("order-mode-seq-btn");
-const rndBtn = document.getElementById("order-mode-rnd-btn");
-const isRandom = zone ? !!zone.randomOrder : false;
-seqBtn.className = !isRandom
-? "px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 cursor-pointer"
-: "px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer";
-rndBtn.className = isRandom
-? "px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-500 text-white cursor-pointer"
-: "px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer";
-} else {
-orderBar.classList.add("hidden");
-helperText.textContent = "특정 탐험구역을 선택하면 해당 구역의 출제 방식(지정 순서 / 랜덤)과 퀴즈 순서를 바꿀 수 있습니다.";
-}
-const filtered = !isZoneFiltered
-? quizData.quizzes
-: quizData.quizzes.filter(q => q.zoneId === filterZoneId);
-if (filtered.length === 0) {
-listEl.innerHTML = ⁠<div class="text-center text-xs text-slate-500 py-4">등록된 퀴즈가 없습니다.</div>⁠;
-return;
-}
-listEl.innerHTML = filtered.map((q, idx) => {
-const z = quizData.zones.find(zone => zone.id === q.zoneId);
-const zName = z ? z.name : "미분류";
-const ansPreview = q.type === "multiple"
-? (q.options[q.correctIndex]?.text || "")
-: q.subjectiveAnswer;
-const orderControls = isZoneFiltered ? ⁠<div class="flex flex-col items-center gap-1 shrink-0 bg-slate-900 border border-slate-700/80 rounded-lg p-1"> <button onclick="moveQuizOrder('${q.id}', -1)" ${idx === 0 ? "disabled" : ""} title="위로 이동" class="w-6 h-5 rounded bg-slate-800 hover:bg-amber-500 hover:text-slate-950 disabled:opacity-30 disabled:hover:bg-slate-800 disabled:hover:text-slate-300 text-slate-300 text-[10px] font-bold cursor-pointer">▲</button> <input type="number" min="1" max="${filtered.length}" value="${idx + 1}" onchange="moveQuizToExactPosition('${q.id}', this.value)" title="원하는 순서 번호 입력" class="w-8 bg-slate-950 border border-slate-700 rounded text-center font-retro text-[11px] text-amber-300 focus:border-amber-400 focus:outline-none py-0.5" /> <button onclick="moveQuizOrder('${q.id}', 1)" ${idx === filtered.length - 1 ? "disabled" : ""} title="아래로 이동" class="w-6 h-5 rounded bg-slate-800 hover:bg-amber-500 hover:text-slate-950 disabled:opacity-30 disabled:hover:bg-slate-800 disabled:hover:text-slate-300 text-slate-300 text-[10px] font-bold cursor-pointer">▼</button> </div>⁠ : "";
-return ⁠<div class="bg-slate-950 border border-slate-700/90 rounded-lg p-3 flex items-center justify-between gap-2.5"> ${orderControls} <div class="min-w-0 flex-1"> <div class="flex flex-wrap items-center gap-1.5 mb-1"> <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">${escapeHTML(zName)}</span> <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">${q.type === "multiple" ?⁠객관식(${q.options.length}지선다)⁠: "주관식"}</span> ${q.questionImg ?⁠<span class="text-[10px] text-sky-400">🖼️문제사진</span>⁠: ""} </div> <div class="text-xs sm:text-sm font-bold text-white truncate">${idx + 1}. ${escapeHTML(q.question)}</div> <div class="text-[11px] text-emerald-400 mt-0.5 truncate">정답: ${escapeHTML(ansPreview)}</div> </div> <div class="flex items-center gap-1.5 shrink-0"> <button onclick="editQuiz('${q.id}')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-bold cursor-pointer">수정</button> <button onclick="deleteQuiz('${q.id}')" class="px-2.5 py-1 rounded bg-rose-950 hover:bg-rose-800 text-rose-300 text-xs font-bold cursor-pointer">삭제</button> </div> </div>⁠;
-}).join("");
-}
-function editQuiz(quizId) {
-const q = quizData.quizzes.find(item => item.id === quizId);
-if (!q) return;
-document.getElementById("edit-quiz-id").value = q.id;
-document.getElementById("quiz-form-title").textContent = "✏️ 퀴즈 수정 모드";
-document.getElementById("cancel-edit-btn").classList.remove("hidden");
-document.getElementById("quiz-form-zone").value = q.zoneId;
-document.getElementById("quiz-form-type").value = q.type;
-document.getElementById("quiz-form-question").value = q.question;
-document.getElementById("quiz-form-qimg").value = q.questionImg || "";
-previewFormImg("qimg");
-document.getElementById("quiz-form-explanation").value = q.explanation || "";
-document.getElementById("quiz-form-eimg").value = q.explanationImg || "";
-previewFormImg("eimg");
-if (q.type === "multiple") {
-adminDraftOptions = q.options.map((o, idx) => ({
-text: o.text,
-img: o.img || "",
-isCorrect: idx === q.correctIndex
-}));
-if (adminDraftOptions.length === 0) {
-adminDraftOptions = [{ text: "", img: "", isCorrect: true }];
-}
-renderAdminOptionsEditor();
-} else {
-renderAdminOptionsEditor();
-document.getElementById("quiz-form-subj-ans").value = q.subjectiveAnswer || "";
-}
-document.getElementById("quiz-form-title").scrollIntoView({ behavior: "smooth" });
-}
-function deleteQuiz(quizId) {
-quizData.quizzes = quizData.quizzes.filter(q => q.id !== quizId);
-saveQuizData();
-renderAdminZones();
-renderAdminQuizList();
-renderHomeScreen();
-showToast("퀴즈가 삭제되었습니다.", "amber");
-}
-// JSON Export / Import for GitHub Pages Repository Sync
-function exportQuizJSON() {
-const dataStr = JSON.stringify(quizData, null, 2);
-const blob = new Blob([dataStr], { type: "application/json" });
-const url = URL.createObjectURL(blob);
-const a = document.createElement("a");
-a.href = url;
-a.download = "dungeon_quiz_data.json";
-a.click();
-URL.revokeObjectURL(url);
-showToast("📤 퀴즈 JSON 파일이 다운로드되었습니다!", "emerald");
-}
-function importQuizJSON(event) {
-const file = event.target.files[0];
-if (!file) return;
-const reader = new FileReader();
-reader.onload = function(e) {
-try {
-const parsed = JSON.parse(e.target.result);
-if (parsed && Array.isArray(parsed.zones) && Array.isArray(parsed.quizzes)) {
-quizData = parsed;
-quizData.zones.forEach(z => {
-if (typeof z.randomOrder !== "boolean") z.randomOrder = false;
-});
-saveQuizData();
-renderAdminZones();
-renderAdminQuizList();
-renderHomeScreen();
-showToast("📥 퀴즈 데이터를 성공적으로 불러왔습니다!", "emerald");
-} else {
-showToast("올바른 퀴즈 JSON 파일 형식이 아닙니다.", "rose");
-}
-} catch (err) {
-showToast("JSON 파일을 읽는 중 오류가 발생했습니다.", "rose");
-}
-};
-reader.readAsText(file);
-}
-// ==========================================
-// 11. UTILITIES (TOAST & HTML ESCAPING)
-// ==========================================
-function showToast(message, color = "amber") {
-const container = document.getElementById("toast-container");
-const toast = document.createElement("div");
-const colorClasses = {
-amber: "bg-slate-900/95 border-amber-400 text-amber-200",
-emerald: "bg-slate-900/95 border-emerald-400 text-emerald-200",
-rose: "bg-slate-900/95 border-rose-500 text-rose-200"
-};
-toast.className = ⁠border ${colorClasses[color] || colorClasses.amber} px-4 py-2.5 rounded-xl shadow-2xl text-xs sm:text-sm font-bold text-center transition-all duration-300 transform translate-y-0 opacity-100⁠;
-toast.textContent = message;
-container.appendChild(toast);
-setTimeout(() => {
-toast.classList.add("opacity-0", "-translate-y-2");
-setTimeout(() => toast.remove(), 300);
-}, 2600);
-}
-function escapeHTML(str) {
-if (typeof str !== "string") return "";
-return str
-.replace(/&/g, "&")
-.replace(/</g, "<")
-.replace(/>/g, ">")
-.replace(/"/g, """)
-.replace(/'/g, "'");
-}
-// Boot Application
-window.onload = function() {
-loadAllData();
-};
-</script>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none w-full max-w-md px-4"></div>
+
+  <!-- TOP HEADER BAR -->
+  <header class="w-full max-w-5xl mx-auto flex items-start justify-between gap-2 sm:gap-4 mb-4 sm:mb-6">
+    <!-- Top-Left: Adventure Log & Wrong Answer Note -->
+    <button onclick="openJournalModal()" class="rpg-card hover:border-amber-400/80 transition-all rounded-xl p-2.5 sm:p-3 flex items-center gap-2.5 sm:gap-3 text-left group cursor-pointer shrink-0">
+      <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-amber-950/70 border border-amber-500/40 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+        <!-- Pixel Scroll/Book SVG -->
+        <svg class="w-6 h-6 sm:w-7 sm:h-7 pixel-art" viewBox="0 0 16 16" fill="none">
+          <rect x="3" y="2" width="10" height="2" fill="#d97706"/>
+          <rect x="2" y="3" width="12" height="10" fill="#f59e0b"/>
+          <rect x="4" y="4" width="8" height="8" fill="#fef3c7"/>
+          <rect x="5" y="6" width="6" height="1" fill="#92400e"/>
+          <rect x="5" y="8" width="5" height="1" fill="#92400e"/>
+          <rect x="5" y="10" width="4" height="1" fill="#92400e"/>
+          <rect x="3" y="12" width="10" height="2" fill="#b45309"/>
+        </svg>
+      </div>
+      <div class="min-w-[115px] sm:min-w-[165px]">
+        <div class="flex items-center gap-1.5">
+          <span id="hdr-level" class="font-retro text-amber-400 font-bold text-xs sm:text-sm">LV.1</span>
+          <span class="font-bold text-xs sm:text-sm text-slate-100 truncate">모험가 일지 &amp; 오답노트</span>
+          <span id="wrong-badge" class="hidden bg-rose-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
+        </div>
+        <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden mt-1.5 border border-slate-700/80">
+          <div id="hdr-exp-bar" class="h-full bg-gradient-to-r from-amber-500 to-yellow-300 transition-all duration-500" style="width: 0%;"></div>
+        </div>
+        <div id="hdr-exp-text" class="font-retro text-[10px] sm:text-[11px] text-slate-400 mt-0.5">EXP 0 / 100</div>
+      </div>
+    </button>
+
+    <!-- Top-Center: Game Title -->
+    <div class="text-center pt-1 sm:pt-1.5 flex-1 min-w-0">
+      <div class="font-retro text-[10px] sm:text-xs tracking-[0.2em] text-amber-400/90 uppercase truncate">KNOWLEDGE LABYRINTH</div>
+      <h1 class="text-lg sm:text-2xl md:text-3xl font-black tracking-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] truncate">
+        던전 퀴즈 RPG
+      </h1>
+    </div>
+
+    <!-- Top-Right: Settings & Admin Quiz Manager -->
+    <button onclick="openSettingsModal()" class="rpg-card hover:border-amber-400/80 transition-all rounded-xl p-2.5 sm:p-3 flex items-center gap-2.5 sm:gap-3 text-right group cursor-pointer shrink-0">
+      <div class="hidden sm:block">
+        <div class="font-bold text-xs sm:text-sm text-slate-100">설정 / 퀴즈관리</div>
+        <div id="hdr-sfx-status" class="font-retro text-[11px] text-emerald-400 mt-0.5">SFX: ON</div>
+      </div>
+      <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-slate-800/90 border border-slate-600/60 flex items-center justify-center shrink-0 group-hover:rotate-45 transition-transform duration-300">
+        <!-- Pixel Gear SVG -->
+        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </div>
+    </button>
+  </header>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="w-full max-w-3xl mx-auto flex-1 flex flex-col justify-center gap-3.5 sm:gap-4 my-auto">
+
+    <!-- ==================== VIEW 1: HOME SCREEN (모험가 베이스캠프) ==================== -->
+    <div id="home-view" class="flex flex-col gap-3.5 sm:gap-4">
+
+      <!-- Player Status & Equipment Bar -->
+      <section class="rpg-card rounded-2xl p-2.5 sm:p-3.5 grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+        <!-- Max HP -->
+        <div class="rpg-subcard rounded-xl p-2.5 flex items-center gap-2.5 border-rose-500/30">
+          <div class="w-9 h-9 rounded-lg bg-rose-950/80 border border-rose-500/40 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-rose-500" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-[11px] text-slate-400 font-medium">최대 체력 (HP)</div>
+            <div id="stat-hp" class="font-retro text-sm sm:text-base font-bold text-rose-400">100 / 100</div>
+          </div>
+        </div>
+
+        <!-- Damage Reduction -->
+        <div class="rpg-subcard rounded-xl p-2.5 flex items-center gap-2.5 border-sky-500/30">
+          <div class="w-9 h-9 rounded-lg bg-sky-950/80 border border-sky-500/40 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-sky-400" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-[11px] text-slate-400 font-medium">피해 감소</div>
+            <div id="stat-def" class="font-retro text-sm sm:text-base font-bold text-sky-300">-0 DMG</div>
+          </div>
+        </div>
+
+        <!-- Equipped Weapon -->
+        <div class="rpg-subcard rounded-xl p-2.5 flex items-center gap-2.5 border-amber-500/30">
+          <div class="w-9 h-9 rounded-lg bg-amber-950/70 border border-amber-500/40 flex items-center justify-center shrink-0 text-base">
+            🗡️
+          </div>
+          <div class="min-w-0">
+            <div class="text-[10px] text-amber-400/90 font-semibold">무기 <span id="stat-weapon-bonus" class="text-amber-300"></span></div>
+            <div id="stat-weapon" class="text-xs sm:text-sm font-bold text-amber-300 truncate">녹슨 단검</div>
+          </div>
+        </div>
+
+        <!-- Equipped Armor -->
+        <div class="rpg-subcard rounded-xl p-2.5 flex items-center gap-2.5 border-emerald-500/30">
+          <div class="w-9 h-9 rounded-lg bg-emerald-950/70 border border-emerald-500/40 flex items-center justify-center shrink-0 text-base">
+            🛡️
+          </div>
+          <div class="min-w-0">
+            <div class="text-[10px] text-emerald-400/90 font-semibold">방어구</div>
+            <div id="stat-armor" class="text-xs sm:text-sm font-bold text-emerald-300 truncate">천 망토</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Campfire Stage -->
+      <section class="arena-frame rounded-2xl p-5 sm:p-7 min-h-[290px] sm:min-h-[330px] flex flex-col items-center justify-between overflow-hidden">
+        <!-- Decorative Background Arches -->
+        <div class="arch-glow w-[240px] sm:w-[320px] h-[250px] sm:h-[290px] absolute bottom-0 pointer-events-none"></div>
+        <div class="arch-glow w-[170px] sm:w-[230px] h-[210px] sm:h-[245px] absolute bottom-0 pointer-events-none opacity-60"></div>
+
+        <!-- Top Pill Badge -->
+        <div class="relative z-10 bg-slate-900/90 border border-amber-500/40 rounded-full px-4 py-1 flex items-center gap-2 shadow-md">
+          <span class="text-sm">⛺</span>
+          <span class="text-xs sm:text-sm font-bold text-amber-300 tracking-wide">모험가 베이스캠프</span>
+        </div>
+
+        <!-- Center Stage: Party Slot + Hero + Campfire -->
+        <div class="relative z-10 w-full max-w-lg flex items-end justify-center gap-5 sm:gap-10 my-4 pt-3">
+
+          <!-- Left: Future Friend Co-op Slot -->
+          <button onclick="showFriendComingSoon()" class="group flex flex-col items-center cursor-pointer mb-2">
+            <div class="w-20 h-28 sm:w-24 sm:h-32 rounded-xl border-2 border-dashed border-slate-600/80 bg-slate-900/50 hover:border-amber-400/70 hover:bg-slate-800/60 transition-all flex flex-col items-center justify-center p-2 text-center">
+              <span class="text-xl sm:text-2xl text-slate-500 group-hover:text-amber-400 font-bold mb-1">+</span>
+              <span class="text-[11px] sm:text-xs font-bold text-slate-400 group-hover:text-slate-200 leading-tight">동행 친구<br>(준비중)</span>
+            </div>
+            <span class="font-retro text-[10px] text-slate-500 mt-2 tracking-wider">PARTY SLOT</span>
+          </button>
+
+          <!-- Center: Pixel Warrior Character -->
+          <div class="flex flex-col items-center">
+            <div id="home-hero-sprite" class="animate-hero relative">
+              <!-- Pixel Hero SVG (Knight with Helmet, Shield, Sword) -->
+              <svg class="w-24 h-24 sm:w-28 sm:h-28 pixel-art drop-shadow-[0_10px_10px_rgba(0,0,0,0.75)]" viewBox="0 0 16 16" fill="none">
+                <!-- Plume -->
+                <rect x="7" y="0" width="2" height="2" fill="#ef4444"/>
+                <!-- Helmet -->
+                <rect x="5" y="2" width="6" height="5" fill="#94a3b8"/>
+                <rect x="6" y="2" width="4" height="1" fill="#cbd5e1"/>
+                <!-- Visor / Eyes -->
+                <rect x="5" y="4" width="6" height="2" fill="#1e293b"/>
+                <rect x="6" y="4" width="1" height="1" fill="#38bdf8"/>
+                <rect x="9" y="4" width="1" height="1" fill="#38bdf8"/>
+                <!-- Cape -->
+                <rect x="4" y="7" width="8" height="5" fill="#dc2626"/>
+                <!-- Armor Body -->
+                <rect x="5" y="7" width="6" height="5" fill="#cbd5e1"/>
+                <rect x="7" y="8" width="2" height="3" fill="#f59e0b"/>
+                <!-- Shield (Left) -->
+                <rect x="2" y="7" width="3" height="5" fill="#0284c7"/>
+                <rect x="3" y="8" width="1" height="3" fill="#7dd3fc"/>
+                <!-- Sword (Right) -->
+                <rect x="12" y="3" width="1" height="6" fill="#f8fafc"/>
+                <rect x="11" y="9" width="3" height="1" fill="#f59e0b"/>
+                <rect x="12" y="10" width="1" height="2" fill="#78350f"/>
+                <!-- Boots -->
+                <rect x="5" y="12" width="2" height="3" fill="#475569"/>
+                <rect x="9" y="12" width="2" height="3" fill="#475569"/>
+                <rect x="4" y="14" width="3" height="1" fill="#1e293b"/>
+                <rect x="9" y="14" width="3" height="1" fill="#1e293b"/>
+              </svg>
+            </div>
+            <!-- Floor Shadow -->
+            <div class="w-16 h-2.5 bg-black/60 rounded-full blur-[2px] -mt-1 mb-2"></div>
+            <!-- Nameplate -->
+            <div class="bg-amber-500 text-slate-950 font-black text-xs sm:text-sm px-3.5 py-1 rounded-md shadow-md">
+              용사 (YOU)
+            </div>
+          </div>
+
+          <!-- Right: Animated Pixel Campfire -->
+          <div class="flex flex-col items-center mb-1">
+            <div class="animate-flame">
+              <svg class="w-12 h-14 sm:w-14 sm:h-16 pixel-art" viewBox="0 0 16 16" fill="none">
+                <!-- Outer Flame -->
+                <rect x="7" y="1" width="2" height="2" fill="#f97316"/>
+                <rect x="6" y="3" width="4" height="2" fill="#f97316"/>
+                <rect x="5" y="5" width="6" height="4" fill="#ea580c"/>
+                <rect x="4" y="7" width="8" height="3" fill="#dc2626"/>
+                <!-- Inner Flame -->
+                <rect x="7" y="4" width="2" height="2" fill="#fde047"/>
+                <rect x="6" y="6" width="4" height="3" fill="#facc15"/>
+                <rect x="7" y="8" width="2" height="2" fill="#fef9c3"/>
+                <!-- Logs -->
+                <rect x="3" y="11" width="10" height="2" fill="#78350f"/>
+                <rect x="4" y="10" width="8" height="1" fill="#92400e"/>
+                <rect x="2" y="12" width="12" height="2" fill="#451a03"/>
+              </svg>
+            </div>
+            <span class="font-retro text-[10px] text-amber-500/80 mt-2 tracking-widest">RESTING</span>
+          </div>
+
+        </div>
+
+        <!-- Subtle Floor Horizon -->
+        <div class="w-3/4 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent"></div>
+      </section>
+
+      <!-- Bottom Action Bar: Zone Selector + Start Exploration -->
+      <section class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-stretch">
+        <!-- Dungeon Zone Selector -->
+        <div class="sm:col-span-5 rpg-card rounded-xl p-2.5 sm:p-3 flex items-center gap-2.5">
+          <div class="text-[11px] font-bold text-slate-400 leading-tight shrink-0 border-r border-slate-700 pr-2.5">
+            탐험<br>구역
+          </div>
+          <div class="relative flex-1 min-w-0">
+            <select id="zone-select" onchange="onSelectZone()" class="w-full bg-slate-950/90 text-amber-300 font-bold text-xs sm:text-sm rounded-lg px-3 py-2.5 border border-slate-700 focus:border-amber-400 focus:outline-none appearance-none cursor-pointer pr-8 truncate">
+              <!-- Populated dynamically -->
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-2.5 flex items-center text-slate-400 text-xs">
+              ▼
+            </div>
+          </div>
+        </div>
+
+        <!-- Start Dungeon Button -->
+        <button onclick="startDungeonRun()" class="sm:col-span-7 btn-amber rounded-xl py-3.5 px-6 font-black text-base sm:text-lg flex items-center justify-center gap-2.5 cursor-pointer">
+          <span>⚔️</span>
+          <span>던전 탐험 시작</span>
+        </button>
+      </section>
+    </div>
+
+    <!-- ==================== VIEW 2: DUNGEON BATTLE SCREEN ==================== -->
+    <div id="battle-view" class="hidden flex-col gap-3.5 sm:gap-4">
+      <!-- Top Battle Progress & Retreat Bar -->
+      <div class="rpg-card rounded-xl p-3 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="bg-amber-500/20 border border-amber-500/40 text-amber-300 font-retro text-xs px-2.5 py-1 rounded-md shrink-0" id="battle-zone-name">지식의 미궁</span>
+          <span class="font-retro text-xs sm:text-sm text-slate-300 truncate" id="battle-stage-text">STAGE 1 / 5</span>
+        </div>
+        <button onclick="confirmRetreat()" class="bg-rose-950/80 hover:bg-rose-900 border border-rose-600/60 text-rose-200 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer shrink-0">
+          🏃 탐험 포기 (나가기)
+        </button>
+      </div>
+
+      <!-- Battle Arena Stage -->
+      <div id="battle-arena" class="arena-frame rounded-2xl p-4 sm:p-6 flex flex-col justify-between gap-4">
+        <!-- Combatants Row -->
+        <div class="grid grid-cols-2 gap-4 items-end pt-2">
+          <!-- Player Side -->
+          <div class="flex flex-col items-center">
+            <div class="w-full max-w-[160px] mb-2">
+              <div class="flex justify-between text-[11px] font-bold mb-1">
+                <span class="text-amber-300">용사 (LV.<span id="btl-lvl">1</span>)</span>
+                <span id="btl-hp-text" class="font-retro text-rose-400">100/100</span>
+              </div>
+              <div class="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-700">
+                <div id="btl-hp-bar" class="h-full bg-gradient-to-r from-rose-600 to-rose-400 transition-all duration-300" style="width: 100%;"></div>
+              </div>
+            </div>
+            <div id="battle-hero-sprite" class="transition-transform">
+              <svg class="w-20 h-20 sm:w-24 sm:h-24 pixel-art" viewBox="0 0 16 16" fill="none">
+                <rect x="7" y="0" width="2" height="2" fill="#ef4444"/>
+                <rect x="5" y="2" width="6" height="5" fill="#94a3b8"/>
+                <rect x="6" y="2" width="4" height="1" fill="#cbd5e1"/>
+                <rect x="5" y="4" width="6" height="2" fill="#1e293b"/>
+                <rect x="6" y="4" width="1" height="1" fill="#38bdf8"/>
+                <rect x="9" y="4" width="1" height="1" fill="#38bdf8"/>
+                <rect x="4" y="7" width="8" height="5" fill="#dc2626"/>
+                <rect x="5" y="7" width="6" height="5" fill="#cbd5e1"/>
+                <rect x="7" y="8" width="2" height="3" fill="#f59e0b"/>
+                <rect x="2" y="7" width="3" height="5" fill="#0284c7"/>
+                <rect x="3" y="8" width="1" height="3" fill="#7dd3fc"/>
+                <rect x="12" y="3" width="1" height="6" fill="#f8fafc"/>
+                <rect x="11" y="9" width="3" height="1" fill="#f59e0b"/>
+                <rect x="12" y="10" width="1" height="2" fill="#78350f"/>
+                <rect x="5" y="12" width="2" height="3" fill="#475569"/>
+                <rect x="9" y="12" width="2" height="3" fill="#475569"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Monster Side -->
+          <div class="flex flex-col items-center">
+            <div class="w-full max-w-[160px] mb-2">
+              <div class="flex justify-between text-[11px] font-bold mb-1">
+                <span id="btl-monster-name" class="text-purple-300 truncate">지식의 슬라임</span>
+                <span id="btl-monster-hp-text" class="font-retro text-emerald-400">100%</span>
+              </div>
+              <div class="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-700">
+                <div id="btl-monster-hp-bar" class="h-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-300" style="width: 100%;"></div>
+              </div>
+            </div>
+            <div id="battle-monster-sprite" class="animate-monster">
+              <!-- Dynamic Monster SVG injected by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Quiz Question Card -->
+        <div class="rpg-card rounded-xl p-4 sm:p-5 border-amber-500/40">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span id="quiz-type-badge" class="text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-500/40">객관식</span>
+            <span class="font-retro text-xs text-amber-400">+<span id="quiz-exp-reward">25</span> EXP</span>
+          </div>
+
+          <p id="quiz-question-text" class="text-base sm:text-lg font-bold text-white leading-relaxed whitespace-pre-wrap">
+            문제 내용이 여기에 표시됩니다.
+          </p>
+
+          <!-- Optional Question Image -->
+          <div id="quiz-question-img-wrap" class="hidden mt-3">
+            <img id="quiz-question-img" src="" alt="문제 이미지" class="max-h-52 rounded-lg border border-slate-700 mx-auto object-contain bg-slate-950" onerror="this.parentElement.classList.add('hidden')" />
+          </div>
+
+          <!-- Answer Input Area (Multiple Choice or Short Answer) -->
+          <div id="quiz-answer-area" class="mt-4 flex flex-col gap-2.5">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Feedback & Explanation Box after Answering -->
+          <div id="quiz-feedback-box" class="hidden mt-4 rounded-xl p-3.5 border">
+            <div id="quiz-feedback-title" class="font-black text-sm sm:text-base mb-1"></div>
+            <div id="quiz-feedback-detail" class="text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-wrap"></div>
+            <div id="quiz-explanation-img-wrap" class="hidden mt-2.5">
+              <img id="quiz-explanation-img" src="" alt="해설 이미지" class="max-h-44 rounded-lg border border-slate-700 object-contain bg-slate-950" onerror="this.parentElement.classList.add('hidden')" />
+            </div>
+            <button id="next-stage-btn" onclick="proceedNextStage()" class="btn-amber w-full mt-3.5 py-2.5 rounded-lg font-black text-sm cursor-pointer">
+              다음 층으로 전진 ➔
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full max-w-5xl mx-auto text-center pt-4 pb-1 text-[11px] text-slate-500 font-retro">
+    KNOWLEDGE LABYRINTH • SESSION PLAY MODE (퀴즈 데이터는 브라우저에 영구 저장됩니다)
+  </footer>
+
+  <!-- ==================== MODAL 1: ADVENTURE LOG & WRONG ANSWER NOTE ==================== -->
+  <div id="journal-modal" class="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5">
+    <div class="rpg-card w-full max-w-2xl max-h-[88vh] rounded-2xl flex flex-col overflow-hidden border-amber-500/50">
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-slate-700/80 flex items-center justify-between bg-slate-900/70">
+        <div class="flex items-center gap-2.5">
+          <span class="text-xl">📜</span>
+          <div>
+            <h2 class="font-black text-base sm:text-lg text-amber-300">모험가 일지 &amp; 오답노트</h2>
+            <p class="text-[11px] text-slate-400">현재 세션의 성장 기록 및 틀린 문제 복습</p>
+          </div>
+        </div>
+        <button onclick="closeModal('journal-modal')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold cursor-pointer">✕</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-4 sm:p-5 overflow-y-auto space-y-5">
+        <!-- Level & EXP Card -->
+        <div class="rpg-subcard rounded-xl p-4 border-amber-500/30">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div class="flex items-center gap-2">
+              <span id="jnl-level" class="font-retro text-xl font-black text-amber-400">LV.1</span>
+              <span class="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold">탐험 완료: <span id="jnl-clears">0</span>회</span>
+            </div>
+            <span id="jnl-exp-text" class="font-retro text-xs text-slate-300">EXP 0 / 100</span>
+          </div>
+          <div class="w-full h-3 bg-slate-950 rounded-full overflow-hidden border border-slate-700">
+            <div id="jnl-exp-bar" class="h-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-300 transition-all duration-300" style="width: 0%;"></div>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-2">💡 던전 탐험을 끝까지 완주하면 처치한 괴물 수만큼 경험치를 얻고, 레벨업 시 새로운 무기/방어구를 획득합니다!</p>
+        </div>
+
+        <!-- Unlocked Equipment Inventory -->
+        <div>
+          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">⚔️ 보유 및 장착 장비 (레벨업 보상)</h3>
+          <div id="jnl-gear-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Wrong Answer Notes -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-bold text-rose-300 uppercase tracking-wider">📕 오답노트 (<span id="jnl-wrong-count">0</span>문제)</h3>
+            <span class="text-[11px] text-slate-500">창을 닫으면 기록이 초기화됩니다</span>
+          </div>
+          <div id="jnl-wrong-list" class="space-y-3">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 2: SETTINGS & ADMIN QUIZ MANAGER ==================== -->
+  <div id="settings-modal" class="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5">
+    <div class="rpg-card w-full max-w-3xl max-h-[90vh] rounded-2xl flex flex-col overflow-hidden border-slate-600">
+      <!-- Header + Tabs -->
+      <div class="p-4 border-b border-slate-700/80 bg-slate-900/80 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <button id="tab-btn-general" onclick="switchSettingsTab('general')" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-amber-500 text-slate-950 cursor-pointer">
+            ⚙️ 게임 설정
+          </button>
+          <button id="tab-btn-admin" onclick="switchSettingsTab('admin')" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer">
+            🔐 관리자 퀴즈 관리
+          </button>
+        </div>
+        <button onclick="closeModal('settings-modal')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold cursor-pointer">✕</button>
+      </div>
+
+      <!-- TAB 1: GENERAL SETTINGS -->
+      <div id="settings-tab-general" class="p-5 overflow-y-auto space-y-4">
+        <div class="rpg-subcard rounded-xl p-4 flex items-center justify-between">
+          <div>
+            <div class="font-bold text-sm text-white">🔊 레트로 효과음 (SFX)</div>
+            <div class="text-xs text-slate-400">공격, 피격, 레벨업 신디사이저 사운드</div>
+          </div>
+          <button id="toggle-sfx-btn" onclick="toggleSFX()" class="px-4 py-2 rounded-lg font-retro text-xs font-bold bg-emerald-600 text-white cursor-pointer">
+            ON
+          </button>
+        </div>
+
+        <div class="rpg-subcard rounded-xl p-4 flex items-center justify-between">
+          <div>
+            <div class="font-bold text-sm text-white">🔔 전투 알림 및 화면 진동 효과</div>
+            <div class="text-xs text-slate-400">피격 시 화면 흔들림 및 전투 알림 배너 표시</div>
+          </div>
+          <button id="toggle-vfx-btn" onclick="toggleVFX()" class="px-4 py-2 rounded-lg font-retro text-xs font-bold bg-emerald-600 text-white cursor-pointer">
+            ON
+          </button>
+        </div>
+
+        <div class="rpg-subcard rounded-xl p-4 flex items-center justify-between border-rose-500/30">
+          <div>
+            <div class="font-bold text-sm text-rose-300">🔄 현재 플레이 기록 초기화</div>
+            <div class="text-xs text-slate-400">레벨, 장비, 오답노트를 처음(LV.1)으로 되돌립니다 (퀴즈는 유지됨)</div>
+          </div>
+          <button onclick="resetSessionProgress()" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-rose-900/80 hover:bg-rose-800 border border-rose-500/50 text-rose-100 cursor-pointer">
+            초기화
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 2: ADMIN MANAGER (LOCKED BY PIN 601090) -->
+      <div id="settings-tab-admin" class="hidden p-4 sm:p-5 overflow-y-auto flex-1">
+        <!-- Password Lock Screen -->
+        <div id="admin-lock-screen" class="py-10 flex flex-col items-center justify-center text-center max-w-sm mx-auto">
+          <div class="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-2xl mb-3">
+            🔒
+          </div>
+          <h3 class="font-black text-lg text-white mb-1">관리자 전용 구역</h3>
+          <p class="text-xs text-slate-400 mb-4">퀴즈 및 탐험구역을 수정하려면 관리자 비밀번호를 입력하세요.</p>
+          <div class="w-full flex gap-2">
+            <input id="admin-pin-input" type="password" inputmode="numeric" maxlength="10" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter') verifyAdminPin()" class="flex-1 bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-xl px-4 py-2.5 text-center font-retro text-base text-amber-300 tracking-widest focus:outline-none" />
+            <button onclick="verifyAdminPin()" class="btn-amber px-5 py-2.5 rounded-xl font-black text-sm cursor-pointer">
+              확인
+            </button>
+          </div>
+          <p id="admin-pin-error" class="hidden text-xs text-rose-400 font-bold mt-2">비밀번호가 일치하지 않습니다.</p>
+        </div>
+
+        <!-- Unlocked Admin Dashboard -->
+        <div id="admin-dashboard" class="hidden space-y-6">
+          <!-- GitHub / Backup Export & Import Bar -->
+          <div class="rpg-subcard rounded-xl p-3.5 border-sky-500/30 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="text-xs font-bold text-sky-300">💾 퀴즈 데이터 백업 / GitHub 배포용 내보내기</div>
+              <div class="text-[11px] text-slate-400">현재 브라우저에 영구 저장됩니다. JSON으로 내보내거나 불러올 수 있습니다.</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="exportQuizJSON()" class="px-3 py-1.5 rounded-lg bg-sky-900/70 hover:bg-sky-800 border border-sky-500/40 text-sky-200 text-xs font-bold cursor-pointer">
+                📤 JSON 내보내기
+              </button>
+              <label class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-xs font-bold cursor-pointer">
+                📥 JSON 불러오기
+                <input type="file" accept=".json" onchange="importQuizJSON(event)" class="hidden" />
+              </label>
+            </div>
+          </div>
+
+          <!-- SECTION A: DUNGEON ZONES MANAGEMENT -->
+          <div class="rpg-subcard rounded-xl p-4 border-amber-500/30">
+            <h3 class="font-black text-sm text-amber-300 mb-3">🗺️ 1. 탐험구역 (과목/분야) 관리</h3>
+            <div class="flex gap-2 mb-3">
+              <input id="new-zone-name" type="text" placeholder="새 탐험구역 이름 (예: 한국사 신전, 영단어 숲)" class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:border-amber-400 focus:outline-none" />
+              <button onclick="addZone()" class="btn-amber px-4 py-2 rounded-lg font-black text-xs sm:text-sm cursor-pointer shrink-0">
+                + 구역 추가
+              </button>
+            </div>
+            <div id="admin-zone-list" class="space-y-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- SECTION B: ADD / EDIT QUIZ FORM -->
+          <div class="rpg-subcard rounded-xl p-4 border-emerald-500/30">
+            <div class="flex items-center justify-between mb-3">
+              <h3 id="quiz-form-title" class="font-black text-sm text-emerald-300">✍️ 2. 새 퀴즈 추가</h3>
+              <button id="cancel-edit-btn" onclick="resetQuizForm()" class="hidden text-xs text-slate-400 hover:text-white underline cursor-pointer">
+                수정 취소 (새로 작성)
+              </button>
+            </div>
+
+            <input type="hidden" id="edit-quiz-id" value="" />
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+              <!-- Target Zone -->
+              <div>
+                <label class="block text-[11px] font-bold text-slate-400 mb-1">소속 탐험구역 선택</label>
+                <select id="quiz-form-zone" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-amber-300 font-bold focus:border-amber-400 focus:outline-none">
+                  <!-- Populated by JS -->
+                </select>
+              </div>
+              <!-- Quiz Type -->
+              <div>
+                <label class="block text-[11px] font-bold text-slate-400 mb-1">문제 유형</label>
+                <select id="quiz-form-type" onchange="renderAdminOptionsEditor()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-white font-bold focus:border-amber-400 focus:outline-none">
+                  <option value="multiple">객관식 (보기 동적 추가)</option>
+                  <option value="subjective">주관식 (단답형 입력)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Question Text & Image -->
+            <div class="mb-3">
+              <label class="block text-[11px] font-bold text-slate-400 mb-1">문제 내용</label>
+              <textarea id="quiz-form-question" rows="2" placeholder="문제를 입력하세요..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:border-amber-400 focus:outline-none"></textarea>
+              <!-- Question Image Input -->
+              <div class="flex flex-wrap items-center gap-2 mt-1.5">
+                <input id="quiz-form-qimg" type="text" placeholder="문제 이미지 URL (선택)" oninput="previewFormImg('qimg')" class="flex-1 min-w-[160px] bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:border-amber-400 focus:outline-none" />
+                <label class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-[11px] font-bold text-slate-200 cursor-pointer shrink-0">
+                  🖼️ 사진 첨부
+                  <input type="file" accept="image/*" onchange="handleImageUpload(event, 'qimg')" class="hidden" />
+                </label>
+                <button type="button" onclick="clearFormImg('qimg')" class="text-[11px] text-rose-400 hover:underline cursor-pointer">삭제</button>
+              </div>
+              <img id="preview-qimg" class="hidden mt-2 max-h-28 rounded border border-slate-700 object-contain" />
+            </div>
+
+            <!-- Dynamic Options (Multiple Choice) OR Short Answer Field -->
+            <div id="admin-options-container" class="mb-3">
+              <!-- Populated dynamically -->
+            </div>
+
+            <!-- Explanation Text & Image -->
+            <div class="mb-4">
+              <label class="block text-[11px] font-bold text-slate-400 mb-1">정답 해설 (선택)</label>
+              <textarea id="quiz-form-explanation" rows="2" placeholder="오답 시 또는 정답 확인 시 보여줄 해설을 입력하세요..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:border-amber-400 focus:outline-none"></textarea>
+              <div class="flex flex-wrap items-center gap-2 mt-1.5">
+                <input id="quiz-form-eimg" type="text" placeholder="해설 이미지 URL (선택)" oninput="previewFormImg('eimg')" class="flex-1 min-w-[160px] bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:border-amber-400 focus:outline-none" />
+                <label class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-[11px] font-bold text-slate-200 cursor-pointer shrink-0">
+                  🖼️ 해설 사진 첨부
+                  <input type="file" accept="image/*" onchange="handleImageUpload(event, 'eimg')" class="hidden" />
+                </label>
+                <button type="button" onclick="clearFormImg('eimg')" class="text-[11px] text-rose-400 hover:underline cursor-pointer">삭제</button>
+              </div>
+              <img id="preview-eimg" class="hidden mt-2 max-h-28 rounded border border-slate-700 object-contain" />
+            </div>
+
+            <button onclick="saveQuizFromForm()" class="btn-amber w-full py-2.5 rounded-xl font-black text-sm cursor-pointer">
+              💾 퀴즈 저장하기
+            </button>
+          </div>
+
+          <!-- SECTION C: EXISTING QUIZZES LIST BY ZONE -->
+          <div class="rpg-subcard rounded-xl p-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <h3 class="font-black text-sm text-slate-200">📋 3. 등록된 퀴즈 목록</h3>
+              <select id="admin-filter-zone" onchange="renderAdminQuizList()" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-amber-300 font-bold">
+                <option value="all">전체 구역 보기</option>
+              </select>
+            </div>
+            <div id="admin-quiz-list" class="space-y-2.5">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 3: DUNGEON CLEAR & LEVEL UP REWARD ==================== -->
+  <div id="result-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="rpg-card w-full max-w-md rounded-2xl p-6 text-center border-2 border-amber-400 shadow-[0_0_40px_rgba(245,158,11,0.35)]">
+      <div id="res-icon" class="text-5xl mb-3">🏆</div>
+      <h2 id="res-title" class="font-black text-2xl text-amber-300 mb-1">던전 탐험 완료!</h2>
+      <p id="res-subtitle" class="text-xs sm:text-sm text-slate-300 mb-4">모든 괴물을 물리치고 베이스캠프로 귀환합니다.</p>
+
+      <div class="rpg-subcard rounded-xl p-3.5 mb-4 space-y-2 text-left">
+        <div class="flex justify-between text-xs sm:text-sm">
+          <span class="text-slate-400">처치한 괴물 (정답 수)</span>
+          <span id="res-correct" class="font-bold text-emerald-400">5 / 5 마리</span>
+        </div>
+        <div class="flex justify-between text-xs sm:text-sm">
+          <span class="text-slate-400">획득 경험치</span>
+          <span id="res-exp" class="font-retro font-bold text-amber-400">+125 EXP</span>
+        </div>
+      </div>
+
+      <!-- Level Up Reward Box -->
+      <div id="res-levelup-box" class="hidden bg-gradient-to-b from-amber-950/90 to-slate-900 border border-amber-400 rounded-xl p-3.5 mb-4">
+        <div class="font-retro text-xs text-amber-300 tracking-widest mb-1">✨ LEVEL UP! ✨</div>
+        <div id="res-new-level" class="font-black text-lg text-white mb-2">LV.2 달성!</div>
+        <div id="res-rewards-list" class="space-y-1.5 text-xs">
+          <!-- Unlocked gear injected here -->
+        </div>
+      </div>
+
+      <button onclick="finishDungeonAndGoHome()" class="btn-amber w-full py-3 rounded-xl font-black text-base cursor-pointer">
+        ⛺ 베이스캠프로 귀환
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
+  <script>
+    // ==========================================
+    // 1. CONSTANTS & REWARD PROGRESSION TABLE
+    // ==========================================
+    const ADMIN_PIN = "601090";
+    const STORAGE_KEY_QUIZ_DATA = "dungeon_quiz_rpg_permanent_v1";
+    const SESSION_KEY_PLAYER = "dungeon_quiz_rpg_session_v1";
+
+    // Level-up Equipment Rewards (Alternating Weapons & Armor/Shields)
+    const LEVEL_REWARDS = [
+      { level: 1, type: "weapon", name: "녹슨 단검", desc: "기본 지급 단검", bonusHp: 0, bonusDef: 0 },
+      { level: 1, type: "armor",  name: "천 망토",   desc: "기본 방어구",     bonusHp: 0, bonusDef: 0 },
+      { level: 2, type: "weapon", name: "청동 장검", desc: "최대 HP +15",     bonusHp: 15, bonusDef: 0 },
+      { level: 3, type: "armor",  name: "가죽 흉갑 & 방패", desc: "피해 감소 +2 DMG", bonusHp: 0, bonusDef: 2 },
+      { level: 4, type: "weapon", name: "강철 대검", desc: "최대 HP +25",     bonusHp: 25, bonusDef: 0 },
+      { level: 5, type: "armor",  name: "미스릴 사슬갑옷", desc: "피해 감소 +4 DMG", bonusHp: 0, bonusDef: 4 },
+      { level: 6, type: "weapon", name: "화염의 마검", desc: "최대 HP +40",   bonusHp: 40, bonusDef: 0 },
+      { level: 7, type: "armor",  name: "성기사의 방어막", desc: "피해 감소 +6 DMG", bonusHp: 0, bonusDef: 6 },
+      { level: 8, type: "weapon", name: "전설의 엑스칼리버", desc: "최대 HP +60", bonusHp: 60, bonusDef: 0 },
+      { level: 9, type: "armor",  name: "드래곤 비늘 갑옷", desc: "피해 감소 +8 DMG", bonusHp: 0, bonusDef: 8 }
+    ];
+
+    // Pixel Monster Sprites for Dungeon Battles
+    const MONSTERS = [
+      {
+        name: "지식의 슬라임",
+        svg: `<svg class="w-20 h-20 sm:w-24 sm:h-24 pixel-art" viewBox="0 0 16 16" fill="none">
+          <rect x="5" y="4" width="6" height="2" fill="#38bdf8"/>
+          <rect x="3" y="6" width="10" height="3" fill="#0284c7"/>
+          <rect x="2" y="9" width="12" height="4" fill="#0369a1"/>
+          <rect x="3" y="13" width="10" height="1" fill="#0c4a6e"/>
+          <rect x="5" y="8" width="2" height="2" fill="#ffffff"/>
+          <rect x="9" y="8" width="2" height="2" fill="#ffffff"/>
+          <rect x="6" y="9" width="1" height="1" fill="#0f172a"/>
+          <rect x="10" y="9" width="1" height="1" fill="#0f172a"/>
+        </svg>`
+      },
+      {
+        name: "미궁의 해골병사",
+        svg: `<svg class="w-20 h-20 sm:w-24 sm:h-24 pixel-art" viewBox="0 0 16 16" fill="none">
+          <rect x="5" y="2" width="6" height="5" fill="#e2e8f0"/>
+          <rect x="6" y="4" width="1" height="2" fill="#0f172a"/>
+          <rect x="9" y="4" width="1" height="2" fill="#0f172a"/>
+          <rect x="6" y="7" width="4" height="2" fill="#cbd5e1"/>
+          <rect x="4" y="9" width="8" height="4" fill="#94a3b8"/>
+          <rect x="5" y="13" width="2" height="2" fill="#e2e8f0"/>
+          <rect x="9" y="13" width="2" height="2" fill="#e2e8f0"/>
+        </svg>`
+      },
+      {
+        name: "어둠의 마법사",
+        svg: `<svg class="w-20 h-20 sm:w-24 sm:h-24 pixel-art" viewBox="0 0 16 16" fill="none">
+          <rect x="7" y="1" width="2" height="2" fill="#7e22ce"/>
+          <rect x="5" y="3" width="6" height="2" fill="#6b21a8"/>
+          <rect x="3" y="5" width="10" height="1" fill="#581c87"/>
+          <rect x="5" y="6" width="6" height="3" fill="#1e1b4b"/>
+          <rect x="6" y="7" width="1" height="1" fill="#facc15"/>
+          <rect x="9" y="7" width="1" height="1" fill="#facc15"/>
+          <rect x="4" y="9" width="8" height="6" fill="#581c87"/>
+        </svg>`
+      },
+      {
+        name: "고대의 수호 골렘",
+        svg: `<svg class="w-20 h-20 sm:w-24 sm:h-24 pixel-art" viewBox="0 0 16 16" fill="none">
+          <rect x="4" y="2" width="8" height="4" fill="#64748b"/>
+          <rect x="6" y="3" width="4" height="1" fill="#ef4444"/>
+          <rect x="2" y="6" width="12" height="6" fill="#475569"/>
+          <rect x="6" y="7" width="4" height="4" fill="#f59e0b"/>
+          <rect x="3" y="12" width="3" height="3" fill="#334155"/>
+          <rect x="10" y="12" width="3" height="3" fill="#334155"/>
+        </svg>`
+      },
+      {
+        name: "심연의 드래곤",
+        svg: `<svg class="w-20 h-20 sm:w-24 sm:h-24 pixel-art" viewBox="0 0 16 16" fill="none">
+          <rect x="4" y="1" width="2" height="2" fill="#fbbf24"/>
+          <rect x="10" y="1" width="2" height="2" fill="#fbbf24"/>
+          <rect x="4" y="3" width="8" height="5" fill="#dc2626"/>
+          <rect x="5" y="5" width="2" height="1" fill="#fef08a"/>
+          <rect x="9" y="5" width="2" height="1" fill="#fef08a"/>
+          <rect x="2" y="7" width="12" height="6" fill="#991b1b"/>
+          <rect x="6" y="8" width="4" height="5" fill="#f97316"/>
+          <rect x="4" y="13" width="3" height="2" fill="#7f1d1d"/>
+          <rect x="9" y="13" width="3" height="2" fill="#7f1d1d"/>
+        </svg>`
+      }
+    ];
+
+    // Default Sample Zones & Quizzes (used if localStorage is empty)
+    const DEFAULT_QUIZ_DATA = {
+      zones: [
+        { id: "zone_1", name: "지식의 미궁" },
+        { id: "zone_2", name: "과학과 우주 신전" }
+      ],
+      quizzes: [
+        {
+          id: "q_101",
+          zoneId: "zone_1",
+          type: "multiple",
+          question: "대한민국의 수도는 어디일까요?",
+          questionImg: "",
+          options: [
+            { text: "부산", img: "" },
+            { text: "서울", img: "" },
+            { text: "인천", img: "" },
+            { text: "대전", img: "" }
+          ],
+          correctIndex: 1,
+          subjectiveAnswer: "",
+          explanation: "대한민국의 수도는 서울특별시입니다.",
+          explanationImg: ""
+        },
+        {
+          id: "q_102",
+          zoneId: "zone_1",
+          type: "multiple",
+          question: "훈민정음을 창제한 조선의 임금은 누구일까요?",
+          questionImg: "",
+          options: [
+            { text: "태조 이성계", img: "" },
+            { text: "세종대왕", img: "" },
+            { text: "정조", img: "" }
+          ],
+          correctIndex: 1,
+          subjectiveAnswer: "",
+          explanation: "세종대왕은 1443년 훈민정음을 창제하고 1446년에 반포하였습니다.",
+          explanationImg: ""
+        },
+        {
+          id: "q_103",
+          zoneId: "zone_1",
+          type: "subjective",
+          question: "1년 중 낮의 길이가 가장 긴 절기를 무엇이라고 할까요? (두 글자)",
+          questionImg: "",
+          options: [],
+          correctIndex: 0,
+          subjectiveAnswer: "하지",
+          explanation: "하지(夏至)는 24절기 중 하나로 북반구에서 낮이 가장 긴 날입니다.",
+          explanationImg: ""
+        },
+        {
+          id: "q_104",
+          zoneId: "zone_1",
+          type: "multiple",
+          question: "세계에서 가장 넓은 대양은 무엇일까요?",
+          questionImg: "",
+          options: [
+            { text: "대서양", img: "" },
+            { text: "인도양", img: "" },
+            { text: "태평양", img: "" },
+            { text: "북극해", img: "" }
+          ],
+          correctIndex: 2,
+          subjectiveAnswer: "",
+          explanation: "태평양은 지구 표면의 약 3분의 1을 차지하는 가장 큰 바다입니다.",
+          explanationImg: ""
+        },
+        {
+          id: "q_105",
+          zoneId: "zone_1",
+          type: "subjective",
+          question: "물의 화학식을 알파벳과 숫자로 적어보세요. (예: CO2)",
+          questionImg: "",
+          options: [],
+          correctIndex: 0,
+          subjectiveAnswer: "H2O",
+          explanation: "물은 수소 원자 2개와 산소 원자 1개가 결합한 H2O입니다.",
+          explanationImg: ""
+        },
+        {
+          id: "q_201",
+          zoneId: "zone_2",
+          type: "multiple",
+          question: "태양계에서 가장 큰 행성은 무엇일까요?",
+          questionImg: "",
+          options: [
+            { text: "지구", img: "" },
+            { text: "화성", img: "" },
+            { text: "목성", img: "" },
+            { text: "토성", img: "" }
+          ],
+          correctIndex: 2,
+          subjectiveAnswer: "",
+          explanation: "목성은 태양계에서 질량과 부피가 가장 큰 거대 가스 행성입니다.",
+          explanationImg: ""
+        },
+        {
+          id: "q_202",
+          zoneId: "zone_2",
+          type: "subjective",
+          question: "식물이 빛 에너지를 이용해 양분을 만드는 과정을 무엇이라 할까요? (세 글자)",
+          questionImg: "",
+          options: [],
+          correctIndex: 0,
+          subjectiveAnswer: "광합성",
+          explanation: "식물은 엽록체에서 빛, 물, 이산화탄소를 이용해 광합성을 합니다.",
+          explanationImg: ""
+        }
+      ]
+    };
+
+    // ==========================================
+    // 2. APPLICATION STATE
+    // ==========================================
+    let quizData = { zones: [], quizzes: [] };
+
+    // Session-only player state (resets on tab close / reload)
+    let playerState = {
+      level: 1,
+      exp: 0,
+      clears: 0,
+      selectedZoneId: "zone_1",
+      wrongNotes: [],
+      sfxEnabled: true,
+      vfxEnabled: true
+    };
+
+    let adminUnlocked = false;
+
+    // Active Dungeon Battle State
+    let battleState = {
+      active: false,
+      zoneId: null,
+      zoneName: "",
+      queue: [],
+      currentIndex: 0,
+      currentHp: 100,
+      maxHp: 100,
+      def: 0,
+      correctCount: 0,
+      answeredCurrent: false
+    };
+
+    // Admin Dynamic Options Editor State
+    let adminDraftOptions = [{ text: "", img: "", isCorrect: true }];
+
+    // ==========================================
+    // 3. WEB AUDIO RETRO SYNTHESIZER (NO EXTERNAL URLS)
+    // ==========================================
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function playTone(freq, type, duration, delay = 0, vol = 0.12) {
+      if (!playerState.sfxEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new AudioCtx();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime + delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + delay + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(audioCtx.currentTime + delay);
+        osc.stop(audioCtx.currentTime + delay + duration);
+      } catch (e) {
+        // Ignore audio errors if blocked
+      }
+    }
+
+    const SFX = {
+      click: () => playTone(520, "square", 0.06, 0, 0.07),
+      attack: () => {
+        playTone(320, "sawtooth", 0.08, 0, 0.12);
+        playTone(640, "square", 0.14, 0.06, 0.12);
+      },
+      damage: () => {
+        playTone(150, "sawtooth", 0.15, 0, 0.16);
+        playTone(105, "square", 0.2, 0.08, 0.16);
+      },
+      levelUp: () => {
+        playTone(523.25, "square", 0.1, 0, 0.12);
+        playTone(659.25, "square", 0.1, 0.1, 0.12);
+        playTone(783.99, "square", 0.1, 0.2, 0.12);
+        playTone(1046.5, "square", 0.3, 0.3, 0.14);
+      },
+      clear: () => {
+        playTone(440, "triangle", 0.12, 0, 0.14);
+        playTone(554.37, "triangle", 0.12, 0.12, 0.14);
+        playTone(659.25, "triangle", 0.28, 0.24, 0.15);
+      }
+    };
+
+    // ==========================================
+    // 4. STORAGE & INITIALIZATION
+    // ==========================================
+    function loadAllData() {
+      // 1. Load Permanent Quiz Data (localStorage)
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY_QUIZ_DATA);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && Array.isArray(parsed.zones) && Array.isArray(parsed.quizzes)) {
+            quizData = parsed;
+          } else {
+            quizData = JSON.parse(JSON.stringify(DEFAULT_QUIZ_DATA));
+            saveQuizData();
+          }
+        } else {
+          quizData = JSON.parse(JSON.stringify(DEFAULT_QUIZ_DATA));
+          saveQuizData();
+        }
+      } catch (e) {
+        quizData = JSON.parse(JSON.stringify(DEFAULT_QUIZ_DATA));
+      }
+
+      // 2. Load Session Player State (sessionStorage - resets when tab/browser closes)
+      try {
+        const sess = sessionStorage.getItem(SESSION_KEY_PLAYER);
+        if (sess) {
+          playerState = { ...playerState, ...JSON.parse(sess) };
+        }
+      } catch (e) {}
+
+      if (quizData.zones.length > 0 && !quizData.zones.some(z => z.id === playerState.selectedZoneId)) {
+        playerState.selectedZoneId = quizData.zones[0].id;
+      }
+
+      renderHomeScreen();
+    }
+
+    function saveQuizData() {
+      try {
+        localStorage.setItem(STORAGE_KEY_QUIZ_DATA, JSON.stringify(quizData));
+      } catch (e) {
+        showToast("⚠️ 저장 공간이 부족합니다. 이미지 크기를 줄여주세요.", "rose");
+      }
+    }
+
+    function saveSessionState() {
+      try {
+        sessionStorage.setItem(SESSION_KEY_PLAYER, JSON.stringify(playerState));
+      } catch (e) {}
+    }
+
+    // ==========================================
+    // 5. PLAYER STATS & EQUIPMENT CALCULATIONS
+    // ==========================================
+    function getPlayerStats() {
+      let maxHp = 100;
+      let def = 0;
+      let currentWeapon = LEVEL_REWARDS[0];
+      let currentArmor = LEVEL_REWARDS[1];
+      const unlocked = [];
+
+      LEVEL_REWARDS.forEach(item => {
+        if (playerState.level >= item.level) {
+          unlocked.push(item);
+          maxHp += item.bonusHp;
+          def += item.bonusDef;
+          if (item.type === "weapon") currentWeapon = item;
+          if (item.type === "armor") currentArmor = item;
+        }
+      });
+
+      const expNeeded = playerState.level * 100;
+      return { maxHp, def, currentWeapon, currentArmor, unlocked, expNeeded };
+    }
+
+    function renderHomeScreen() {
+      const stats = getPlayerStats();
+
+      // Header Level & EXP
+      document.getElementById("hdr-level").textContent = `LV.${playerState.level}`;
+      const expPct = Math.min(100, Math.round((playerState.exp / stats.expNeeded) * 100));
+      document.getElementById("hdr-exp-bar").style.width = `${expPct}%`;
+      document.getElementById("hdr-exp-text").textContent = `EXP ${playerState.exp} / ${stats.expNeeded}`;
+
+      // Wrong Note Badge
+      const badge = document.getElementById("wrong-badge");
+      if (playerState.wrongNotes.length > 0) {
+        badge.textContent = playerState.wrongNotes.length;
+        badge.classList.remove("hidden");
+      } else {
+        badge.classList.add("hidden");
+      }
+
+      // SFX Status
+      const sfxEl = document.getElementById("hdr-sfx-status");
+      sfxEl.textContent = playerState.sfxEnabled ? "SFX: ON" : "SFX: OFF";
+      sfxEl.className = `font-retro text-[11px] mt-0.5 ${playerState.sfxEnabled ? "text-emerald-400" : "text-slate-500"}`;
+
+      // Stats Bar
+      document.getElementById("stat-hp").textContent = `${stats.maxHp} / ${stats.maxHp}`;
+      document.getElementById("stat-def").textContent = `-${stats.def} DMG`;
+      document.getElementById("stat-weapon").textContent = stats.currentWeapon.name;
+      document.getElementById("stat-armor").textContent = stats.currentArmor.name;
+
+      // Zone Selector Dropdown
+      const zoneSelect = document.getElementById("zone-select");
+      zoneSelect.innerHTML = "";
+      if (quizData.zones.length === 0) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "등록된 탐험구역 없음";
+        zoneSelect.appendChild(opt);
+      } else {
+        quizData.zones.forEach(z => {
+          const count = quizData.quizzes.filter(q => q.zoneId === z.id).length;
+          const opt = document.createElement("option");
+          opt.value = z.id;
+          opt.textContent = `${z.name} (${count}층)`;
+          if (z.id === playerState.selectedZoneId) opt.selected = true;
+          zoneSelect.appendChild(opt);
+        });
+      }
+    }
+
+    function onSelectZone() {
+      SFX.click();
+      playerState.selectedZoneId = document.getElementById("zone-select").value;
+      saveSessionState();
+    }
+
+    function showFriendComingSoon() {
+      SFX.click();
+      showToast("🤝 친구 초대 및 파티 동행 시스템은 곧 업데이트될 예정입니다!", "amber");
+    }
+
+    // ==========================================
+    // 6. DUNGEON EXPLORATION & QUIZ COMBAT
+    // ==========================================
+    function startDungeonRun() {
+      SFX.click();
+      const zoneId = document.getElementById("zone-select").value;
+      const zone = quizData.zones.find(z => z.id === zoneId);
+      if (!zone) {
+        showToast("탐험할 구역을 먼저 선택해주세요!", "rose");
+        return;
+      }
+
+      const zoneQuizzes = quizData.quizzes.filter(q => q.zoneId === zoneId);
+      if (zoneQuizzes.length === 0) {
+        showToast(`'${zone.name}'에 등록된 퀴즈가 없습니다. 관리자 메뉴에서 퀴즈를 추가해주세요!`, "amber");
+        return;
+      }
+
+      const stats = getPlayerStats();
+      battleState = {
+        active: true,
+        zoneId: zone.id,
+        zoneName: zone.name,
+        queue: JSON.parse(JSON.stringify(zoneQuizzes)), // Fresh full run from floor 1
+        currentIndex: 0,
+        currentHp: stats.maxHp,
+        maxHp: stats.maxHp,
+        def: stats.def,
+        correctCount: 0,
+        answeredCurrent: false
+      };
+
+      document.getElementById("home-view").classList.add("hidden");
+      document.getElementById("battle-view").classList.remove("hidden");
+      document.getElementById("battle-view").classList.add("flex");
+
+      renderBattleStage();
+    }
+
+    function renderBattleStage() {
+      const total = battleState.queue.length;
+      const idx = battleState.currentIndex;
+      const quiz = battleState.queue[idx];
+      const monster = MONSTERS[idx % MONSTERS.length];
+
+      document.getElementById("battle-zone-name").textContent = battleState.zoneName;
+      document.getElementById("battle-stage-text").textContent = `STAGE ${idx + 1} / ${total}`;
+      document.getElementById("btl-lvl").textContent = playerState.level;
+
+      updateBattleHPUI();
+
+      // Monster UI
+      document.getElementById("btl-monster-name").textContent = monster.name;
+      document.getElementById("btl-monster-hp-text").textContent = "100%";
+      document.getElementById("btl-monster-hp-bar").style.width = "100%";
+      document.getElementById("battle-monster-sprite").innerHTML = monster.svg;
+      document.getElementById("battle-monster-sprite").style.opacity = "1";
+
+      // Quiz UI
+      battleState.answeredCurrent = false;
+      document.getElementById("quiz-type-badge").textContent = quiz.type === "multiple" ? "객관식" : "주관식";
+      document.getElementById("quiz-exp-reward").textContent = "25";
+      document.getElementById("quiz-question-text").textContent = quiz.question;
+
+      const qImgWrap = document.getElementById("quiz-question-img-wrap");
+      const qImg = document.getElementById("quiz-question-img");
+      if (quiz.questionImg && quiz.questionImg.trim() !== "") {
+        qImg.src = quiz.questionImg;
+        qImgWrap.classList.remove("hidden");
+      } else {
+        qImgWrap.classList.add("hidden");
+      }
+
+      // Reset Feedback
+      const fbBox = document.getElementById("quiz-feedback-box");
+      fbBox.classList.add("hidden");
+
+      // Render Answer Area
+      const ansArea = document.getElementById("quiz-answer-area");
+      ansArea.innerHTML = "";
+
+      if (quiz.type === "multiple") {
+        quiz.options.forEach((opt, oIdx) => {
+          const btn = document.createElement("button");
+          btn.className = "option-btn w-full text-left bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-amber-400/80 rounded-xl p-3 sm:p-3.5 transition-all flex items-center gap-3 cursor-pointer";
+          btn.onclick = () => submitMultipleChoice(oIdx);
+
+          const numBadge = `<span class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-600 font-retro text-xs font-bold text-amber-300 flex items-center justify-center shrink-0">${oIdx + 1}</span>`;
+          const optText = `<span class="text-sm sm:text-base font-medium text-slate-100 flex-1">${escapeHTML(opt.text)}</span>`;
+          const optImg = opt.img ? `<img src="${escapeHTML(opt.img)}" alt="보기 이미지" class="max-h-16 rounded border border-slate-700 object-contain bg-slate-950" />` : "";
+
+          btn.innerHTML = `${numBadge}<div class="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-2">${optText}${optImg}</div>`;
+          ansArea.appendChild(btn);
+        });
+      } else {
+        // Subjective Input
+        ansArea.innerHTML = `
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input id="subjective-input" type="text" placeholder="정답을 입력하세요..." onkeydown="if(event.key==='Enter') submitSubjectiveAnswer()" class="flex-1 bg-slate-950 border border-slate-600 focus:border-amber-400 rounded-xl px-4 py-3 text-sm sm:text-base text-white font-bold focus:outline-none" />
+            <button id="subjective-submit-btn" onclick="submitSubjectiveAnswer()" class="btn-amber px-6 py-3 rounded-xl font-black text-sm sm:text-base cursor-pointer shrink-0">
+              ⚔️ 공격 (제출)
+            </button>
+          </div>
+        `;
+        setTimeout(() => {
+          const inp = document.getElementById("subjective-input");
+          if (inp) inp.focus();
+        }, 50);
+      }
+    }
+
+    function updateBattleHPUI() {
+      const pct = Math.max(0, Math.round((battleState.currentHp / battleState.maxHp) * 100));
+      document.getElementById("btl-hp-text").textContent = `${battleState.currentHp}/${battleState.maxHp}`;
+      document.getElementById("btl-hp-bar").style.width = `${pct}%`;
+    }
+
+    function submitMultipleChoice(selectedIndex) {
+      if (battleState.answeredCurrent) return;
+      const quiz = battleState.queue[battleState.currentIndex];
+      const isCorrect = selectedIndex === quiz.correctIndex;
+      const userText = quiz.options[selectedIndex] ? quiz.options[selectedIndex].text : "선택 없음";
+      const correctText = quiz.options[quiz.correctIndex] ? quiz.options[quiz.correctIndex].text : "";
+
+      // Highlight options
+      const buttons = document.querySelectorAll(".option-btn");
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        btn.classList.remove("hover:bg-slate-800", "hover:border-amber-400/80");
+        if (i === quiz.correctIndex) {
+          btn.classList.add("!border-emerald-400", "!bg-emerald-950/70");
+        } else if (i === selectedIndex && !isCorrect) {
+          btn.classList.add("!border-rose-500", "!bg-rose-950/70");
+        } else {
+          btn.classList.add("opacity-50");
+        }
+      });
+
+      resolveBattleTurn(isCorrect, userText, correctText);
+    }
+
+    function submitSubjectiveAnswer() {
+      if (battleState.answeredCurrent) return;
+      const inp = document.getElementById("subjective-input");
+      const btn = document.getElementById("subjective-submit-btn");
+      const userVal = (inp.value || "").trim();
+      if (!userVal) {
+        showToast("정답을 입력해주세요!", "amber");
+        return;
+      }
+
+      inp.disabled = true;
+      btn.disabled = true;
+
+      const quiz = battleState.queue[battleState.currentIndex];
+      const normalize = s => s.replace(/\s+/g, "").toLowerCase();
+      const isCorrect = normalize(userVal) === normalize(quiz.subjectiveAnswer);
+
+      resolveBattleTurn(isCorrect, userVal, quiz.subjectiveAnswer);
+    }
+
+    function resolveBattleTurn(isCorrect, userAnswerText, correctAnswerText) {
+      battleState.answeredCurrent = true;
+      const quiz = battleState.queue[battleState.currentIndex];
+
+      const fbBox = document.getElementById("quiz-feedback-box");
+      const fbTitle = document.getElementById("quiz-feedback-title");
+      const fbDetail = document.getElementById("quiz-feedback-detail");
+      const eImgWrap = document.getElementById("quiz-explanation-img-wrap");
+      const eImg = document.getElementById("quiz-explanation-img");
+
+      fbBox.classList.remove("hidden", "bg-emerald-950/60", "border-emerald-500/60", "bg-rose-950/60", "border-rose-500/60");
+
+      if (isCorrect) {
+        // Player attacks & defeats monster!
+        SFX.attack();
+        battleState.correctCount++;
+
+        const heroEl = document.getElementById("battle-hero-sprite");
+        heroEl.classList.add("animate-slash");
+        setTimeout(() => heroEl.classList.remove("animate-slash"), 450);
+
+        document.getElementById("btl-monster-hp-text").textContent = "0%";
+        document.getElementById("btl-monster-hp-bar").style.width = "0%";
+        document.getElementById("battle-monster-sprite").style.opacity = "0.25";
+
+        fbBox.classList.add("bg-emerald-950/60", "border-emerald-500/60");
+        fbTitle.className = "font-black text-sm sm:text-base mb-1 text-emerald-300";
+        fbTitle.textContent = "⚔️ 정답입니다! 괴물을 처치했습니다!";
+        fbDetail.textContent = quiz.explanation ? `해설: ${quiz.explanation}` : `정답: ${correctAnswerText}`;
+      } else {
+        // Monster hits player (-10 HP mitigated by Damage Reduction)
+        SFX.damage();
+        const dmgTaken = Math.max(1, 10 - battleState.def);
+        battleState.currentHp = Math.max(0, battleState.currentHp - dmgTaken);
+        updateBattleHPUI();
+
+        if (playerState.vfxEnabled) {
+          const arena = document.getElementById("battle-arena");
+          arena.classList.add("animate-shake", "flash-red");
+          setTimeout(() => arena.classList.remove("animate-shake", "flash-red"), 450);
+        }
+
+        // Record in Session Wrong Answer Note
+        playerState.wrongNotes.unshift({
+          zoneName: battleState.zoneName,
+          question: quiz.question,
+          questionImg: quiz.questionImg || "",
+          userAnswer: userAnswerText,
+          correctAnswer: correctAnswerText,
+          explanation: quiz.explanation || "",
+          explanationImg: quiz.explanationImg || "",
+          timestamp: new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })
+        });
+        saveSessionState();
+
+        fbBox.classList.add("bg-rose-950/60", "border-rose-500/60");
+        fbTitle.className = "font-black text-sm sm:text-base mb-1 text-rose-300";
+        fbTitle.textContent = `💥 오답! 괴물의 반격으로 체력 -${dmgTaken} 감소!`;
+        fbDetail.textContent = `내 답안: ${userAnswerText} | 정답: ${correctAnswerText}${quiz.explanation ? `\n해설: ${quiz.explanation}` : ""}`;
+      }
+
+      if (quiz.explanationImg && quiz.explanationImg.trim() !== "") {
+        eImg.src = quiz.explanationImg;
+        eImgWrap.classList.remove("hidden");
+      } else {
+        eImgWrap.classList.add("hidden");
+      }
+
+      const nextBtn = document.getElementById("next-stage-btn");
+      if (battleState.currentHp <= 0) {
+        nextBtn.textContent = "💀 체력 고갈... 베이스캠프로 후퇴";
+      } else if (battleState.currentIndex + 1 >= battleState.queue.length) {
+        nextBtn.textContent = "🏆 던전 탐험 완료 보상 받기";
+      } else {
+        nextBtn.textContent = "다음 층으로 전진 ➔";
+      }
+    }
+
+    function proceedNextStage() {
+      SFX.click();
+      // Defeated if HP reached 0
+      if (battleState.currentHp <= 0) {
+        showToast("💀 체력이 모두 소진되어 탐험에 실패했습니다. 다시 도전해보세요!", "rose");
+        abortBattleToHome();
+        return;
+      }
+
+      battleState.currentIndex++;
+      if (battleState.currentIndex < battleState.queue.length) {
+        renderBattleStage();
+      } else {
+        completeDungeonRun();
+      }
+    }
+
+    // Mid-run exit: resets progress for this run so next start begins at floor 1
+    function confirmRetreat() {
+      SFX.click();
+      showToast("🏃 탐험을 중도 포기했습니다. 다음 도전 시 1층부터 다시 시작합니다.", "amber");
+      abortBattleToHome();
+    }
+
+    function abortBattleToHome() {
+      battleState.active = false;
+      document.getElementById("battle-view").classList.add("hidden");
+      document.getElementById("battle-view").classList.remove("flex");
+      document.getElementById("home-view").classList.remove("hidden");
+      renderHomeScreen();
+    }
+
+    // Full Dungeon Clear -> Grant EXP & Level-Up Rewards
+    function completeDungeonRun() {
+      const gainedExp = battleState.correctCount * 25;
+      const oldLevel = playerState.level;
+
+      playerState.exp += gainedExp;
+      playerState.clears += 1;
+
+      const unlockedThisRun = [];
+      while (playerState.exp >= playerState.level * 100) {
+        playerState.exp -= playerState.level * 100;
+        playerState.level += 1;
+        const reward = LEVEL_REWARDS.find(r => r.level === playerState.level);
+        if (reward) unlockedThisRun.push(reward);
+      }
+
+      saveSessionState();
+
+      // Populate Result Modal
+      document.getElementById("res-correct").textContent = `${battleState.correctCount} / ${battleState.queue.length} 마리`;
+      document.getElementById("res-exp").textContent = `+${gainedExp} EXP`;
+
+      const lvlBox = document.getElementById("res-levelup-box");
+      if (playerState.level > oldLevel) {
+        SFX.levelUp();
+        lvlBox.classList.remove("hidden");
+        document.getElementById("res-new-level").textContent = `LV.${oldLevel} ➔ LV.${playerState.level} 달성!`;
+        const rList = document.getElementById("res-rewards-list");
+        if (unlockedThisRun.length > 0) {
+          rList.innerHTML = unlockedThisRun.map(item => `
+            <div class="bg-slate-950/80 border border-amber-500/40 rounded-lg p-2 flex items-center justify-between">
+              <span class="font-bold text-amber-300">${item.type === "weapon" ? "🗡️" : "🛡️"} ${item.name}</span>
+              <span class="text-emerald-300 font-retro">${item.desc}</span>
+            </div>
+          `).join("");
+        } else {
+          rList.innerHTML = `<div class="text-amber-200">기본 능력치가 더욱 강해졌습니다!</div>`;
+        }
+      } else {
+        SFX.clear();
+        lvlBox.classList.add("hidden");
+      }
+
+      document.getElementById("result-modal").classList.remove("hidden");
+      document.getElementById("result-modal").classList.add("flex");
+    }
+
+    function finishDungeonAndGoHome() {
+      SFX.click();
+      closeModal("result-modal");
+      abortBattleToHome();
+    }
+
+    // ==========================================
+    // 7. JOURNAL & WRONG ANSWER NOTE MODAL
+    // ==========================================
+    function openJournalModal() {
+      SFX.click();
+      const stats = getPlayerStats();
+
+      document.getElementById("jnl-level").textContent = `LV.${playerState.level}`;
+      document.getElementById("jnl-clears").textContent = playerState.clears;
+      document.getElementById("jnl-exp-text").textContent = `EXP ${playerState.exp} / ${stats.expNeeded}`;
+      const expPct = Math.min(100, Math.round((playerState.exp / stats.expNeeded) * 100));
+      document.getElementById("jnl-exp-bar").style.width = `${expPct}%`;
+
+      // Render Unlocked Gear
+      const gearList = document.getElementById("jnl-gear-list");
+      gearList.innerHTML = stats.unlocked.map(g => `
+        <div class="rpg-subcard rounded-lg p-2.5 flex items-center justify-between border-slate-700">
+          <div class="flex items-center gap-2">
+            <span>${g.type === "weapon" ? "🗡️" : "🛡️"}</span>
+            <div>
+              <div class="text-xs font-bold text-slate-100">${g.name}</div>
+              <div class="text-[10px] text-slate-400">LV.${g.level} 해금 • ${g.desc}</div>
+            </div>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/30">보유중</span>
+        </div>
+      `).join("");
+
+      // Render Wrong Answer Notes
+      document.getElementById("jnl-wrong-count").textContent = playerState.wrongNotes.length;
+      const wrongList = document.getElementById("jnl-wrong-list");
+
+      if (playerState.wrongNotes.length === 0) {
+        wrongList.innerHTML = `
+          <div class="rpg-subcard rounded-xl p-6 text-center text-xs text-slate-400">
+            아직 틀린 문제가 없습니다. 완벽한 모험을 이어가세요! ✨
+          </div>
+        `;
+      } else {
+        wrongList.innerHTML = playerState.wrongNotes.map((w, idx) => `
+          <div class="rpg-subcard rounded-xl p-3.5 border-rose-500/30 space-y-2">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="font-bold text-amber-300">[${escapeHTML(w.zoneName)}]</span>
+              <span class="text-slate-500">${w.timestamp}</span>
+            </div>
+            <div class="text-xs sm:text-sm font-bold text-white whitespace-pre-wrap">${idx + 1}. ${escapeHTML(w.question)}</div>
+            ${w.questionImg ? `<img src="${escapeHTML(w.questionImg)}" class="max-h-32 rounded border border-slate-700 object-contain" />` : ""}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+              <div class="bg-rose-950/50 border border-rose-500/30 rounded-lg p-2 text-rose-200">
+                <span class="font-bold">❌ 내 답:</span> ${escapeHTML(w.userAnswer)}
+              </div>
+              <div class="bg-emerald-950/50 border border-emerald-500/30 rounded-lg p-2 text-emerald-200">
+                <span class="font-bold">⭕ 정답:</span> ${escapeHTML(w.correctAnswer)}
+              </div>
+            </div>
+            ${w.explanation ? `<div class="text-xs text-slate-300 bg-slate-900/90 rounded-lg p-2.5 border border-slate-700/80">💡 ${escapeHTML(w.explanation)}</div>` : ""}
+            ${w.explanationImg ? `<img src="${escapeHTML(w.explanationImg)}" class="max-h-32 rounded border border-slate-700 object-contain" />` : ""}
+          </div>
+        `).join("");
+      }
+
+      document.getElementById("journal-modal").classList.remove("hidden");
+      document.getElementById("journal-modal").classList.add("flex");
+    }
+
+    // ==========================================
+    // 8. SETTINGS & ADMIN MANAGER (PIN: 601090)
+    // ==========================================
+    function openSettingsModal() {
+      SFX.click();
+      updateSettingsTogglesUI();
+      switchSettingsTab("general");
+      document.getElementById("settings-modal").classList.remove("hidden");
+      document.getElementById("settings-modal").classList.add("flex");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add("hidden");
+      document.getElementById(id).classList.remove("flex");
+    }
+
+    function switchSettingsTab(tab) {
+      SFX.click();
+      const genBtn = document.getElementById("tab-btn-general");
+      const admBtn = document.getElementById("tab-btn-admin");
+      const genTab = document.getElementById("settings-tab-general");
+      const admTab = document.getElementById("settings-tab-admin");
+
+      if (tab === "general") {
+        genBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-amber-500 text-slate-950 cursor-pointer";
+        admBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer";
+        genTab.classList.remove("hidden");
+        admTab.classList.add("hidden");
+      } else {
+        admBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-amber-500 text-slate-950 cursor-pointer";
+        genBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer";
+        genTab.classList.add("hidden");
+        admTab.classList.remove("hidden");
+
+        if (adminUnlocked) {
+          showAdminDashboard();
+        } else {
+          document.getElementById("admin-lock-screen").classList.remove("hidden");
+          document.getElementById("admin-dashboard").classList.add("hidden");
+          document.getElementById("admin-pin-input").value = "";
+          document.getElementById("admin-pin-error").classList.add("hidden");
+          setTimeout(() => document.getElementById("admin-pin-input").focus(), 50);
+        }
+      }
+    }
+
+    function toggleSFX() {
+      playerState.sfxEnabled = !playerState.sfxEnabled;
+      saveSessionState();
+      if (playerState.sfxEnabled) SFX.click();
+      updateSettingsTogglesUI();
+      renderHomeScreen();
+    }
+
+    function toggleVFX() {
+      SFX.click();
+      playerState.vfxEnabled = !playerState.vfxEnabled;
+      saveSessionState();
+      updateSettingsTogglesUI();
+    }
+
+    function updateSettingsTogglesUI() {
+      const sfxBtn = document.getElementById("toggle-sfx-btn");
+      sfxBtn.textContent = playerState.sfxEnabled ? "ON" : "OFF";
+      sfxBtn.className = `px-4 py-2 rounded-lg font-retro text-xs font-bold cursor-pointer ${playerState.sfxEnabled ? "bg-emerald-600 text-white" : "bg-slate-700 text-slate-300"}`;
+
+      const vfxBtn = document.getElementById("toggle-vfx-btn");
+      vfxBtn.textContent = playerState.vfxEnabled ? "ON" : "OFF";
+      vfxBtn.className = `px-4 py-2 rounded-lg font-retro text-xs font-bold cursor-pointer ${playerState.vfxEnabled ? "bg-emerald-600 text-white" : "bg-slate-700 text-slate-300"}`;
+    }
+
+    function resetSessionProgress() {
+      SFX.click();
+      playerState.level = 1;
+      playerState.exp = 0;
+      playerState.clears = 0;
+      playerState.wrongNotes = [];
+      saveSessionState();
+      renderHomeScreen();
+      showToast("🔄 플레이 기록이 LV.1로 초기화되었습니다.", "amber");
+    }
+
+    // Verify Admin Password (601090)
+    function verifyAdminPin() {
+      const val = document.getElementById("admin-pin-input").value.trim();
+      if (val === ADMIN_PIN) {
+        SFX.levelUp();
+        adminUnlocked = true;
+        showAdminDashboard();
+      } else {
+        SFX.damage();
+        document.getElementById("admin-pin-error").classList.remove("hidden");
+      }
+    }
+
+    function showAdminDashboard() {
+      document.getElementById("admin-lock-screen").classList.add("hidden");
+      document.getElementById("admin-dashboard").classList.remove("hidden");
+      renderAdminZones();
+      resetQuizForm();
+      renderAdminQuizList();
+    }
+
+    // ==========================================
+    // 9. ADMIN: DUNGEON ZONES CRUD
+    // ==========================================
+    function renderAdminZones() {
+      const list = document.getElementById("admin-zone-list");
+      const formZoneSel = document.getElementById("quiz-form-zone");
+      const filterZoneSel = document.getElementById("admin-filter-zone");
+
+      const prevFormZone = formZoneSel.value;
+      const prevFilterZone = filterZoneSel.value;
+
+      list.innerHTML = "";
+      formZoneSel.innerHTML = "";
+      filterZoneSel.innerHTML = `<option value="all">전체 구역 보기 (${quizData.quizzes.length})</option>`;
+
+      quizData.zones.forEach(z => {
+        const qCount = quizData.quizzes.filter(q => q.zoneId === z.id).length;
+
+        // Zone Row
+        const row = document.createElement("div");
+        row.className = "flex items-center gap-2 bg-slate-950/90 border border-slate-700 rounded-lg p-2";
+        row.innerHTML = `
+          <input type="text" value="${escapeHTML(z.name)}" onchange="renameZone('${z.id}', this.value)" class="flex-1 bg-transparent text-xs sm:text-sm font-bold text-amber-300 px-2 py-1 rounded focus:bg-slate-900 focus:outline-none border border-transparent focus:border-amber-400" />
+          <span class="font-retro text-[11px] text-slate-400 shrink-0">${qCount}문제</span>
+          <button onclick="deleteZone('${z.id}')" class="px-2.5 py-1 rounded bg-rose-950 hover:bg-rose-800 text-rose-300 text-xs font-bold cursor-pointer shrink-0">삭제</button>
+        `;
+        list.appendChild(row);
+
+        // Select Options
+        const opt1 = new Option(`${z.name} (${qCount}문제)`, z.id);
+        formZoneSel.add(opt1);
+
+        const opt2 = new Option(`${z.name} (${qCount})`, z.id);
+        filterZoneSel.add(opt2);
+      });
+
+      if (prevFormZone && quizData.zones.some(z => z.id === prevFormZone)) {
+        formZoneSel.value = prevFormZone;
+      }
+      if (prevFilterZone) {
+        filterZoneSel.value = prevFilterZone;
+      }
+    }
+
+    function addZone() {
+      const inp = document.getElementById("new-zone-name");
+      const name = inp.value.trim();
+      if (!name) {
+        showToast("탐험구역 이름을 입력해주세요.", "amber");
+        return;
+      }
+      const newZone = { id: "zone_" + Date.now(), name };
+      quizData.zones.push(newZone);
+      inp.value = "";
+      saveQuizData();
+      renderAdminZones();
+      renderHomeScreen();
+      showToast(`✅ '${name}' 탐험구역이 추가되었습니다.`, "emerald");
+    }
+
+    function renameZone(zoneId, newName) {
+      const trimmed = newName.trim();
+      if (!trimmed) return;
+      const zone = quizData.zones.find(z => z.id === zoneId);
+      if (zone) {
+        zone.name = trimmed;
+        saveQuizData();
+        renderAdminZones();
+        renderHomeScreen();
+        renderAdminQuizList();
+        showToast("탐험구역 이름이 수정되었습니다.", "emerald");
+      }
+    }
+
+    function deleteZone(zoneId) {
+      if (quizData.zones.length <= 1) {
+        showToast("최소 1개 이상의 탐험구역이 필요합니다.", "rose");
+        return;
+      }
+      quizData.zones = quizData.zones.filter(z => z.id !== zoneId);
+      quizData.quizzes = quizData.quizzes.filter(q => q.zoneId !== zoneId);
+      if (playerState.selectedZoneId === zoneId) {
+        playerState.selectedZoneId = quizData.zones[0].id;
+      }
+      saveQuizData();
+      renderAdminZones();
+      renderAdminQuizList();
+      renderHomeScreen();
+      showToast("탐험구역과 해당 구역의 퀴즈가 삭제되었습니다.", "amber");
+    }
+
+    // ==========================================
+    // 10. ADMIN: DYNAMIC QUIZ CREATION & EDITING
+    // ==========================================
+    function resetQuizForm() {
+      document.getElementById("edit-quiz-id").value = "";
+      document.getElementById("quiz-form-title").textContent = "✍️ 2. 새 퀴즈 추가";
+      document.getElementById("cancel-edit-btn").classList.add("hidden");
+      document.getElementById("quiz-form-type").value = "multiple";
+      document.getElementById("quiz-form-question").value = "";
+      document.getElementById("quiz-form-qimg").value = "";
+      document.getElementById("preview-qimg").classList.add("hidden");
+      document.getElementById("quiz-form-explanation").value = "";
+      document.getElementById("quiz-form-eimg").value = "";
+      document.getElementById("preview-eimg").classList.add("hidden");
+
+      // Default starts with 1 option + '+' button as requested!
+      adminDraftOptions = [{ text: "", img: "", isCorrect: true }];
+      renderAdminOptionsEditor();
+    }
+
+    function renderAdminOptionsEditor() {
+      const type = document.getElementById("quiz-form-type").value;
+      const container = document.getElementById("admin-options-container");
+
+      if (type === "subjective") {
+        const existingSubj = document.getElementById("quiz-form-subj-ans")?.value || "";
+        container.innerHTML = `
+          <label class="block text-[11px] font-bold text-amber-300 mb-1">주관식 정답 단어/문장</label>
+          <input id="quiz-form-subj-ans" type="text" value="${escapeHTML(existingSubj)}" placeholder="정답을 입력하세요 (띄어쓰기/대소문자 자동 보정)" class="w-full bg-slate-950 border border-amber-500/50 rounded-lg px-3 py-2 text-xs sm:text-sm text-white font-bold focus:outline-none" />
+        `;
+        return;
+      }
+
+      // Multiple Choice Dynamic Options (starts with 1 option + '+' button)
+      let html = `
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="text-[11px] font-bold text-amber-300">객관식 보기 설정 (정답 라디오 버튼 체크)</label>
+          <button type="button" onclick="addDraftOption()" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs cursor-pointer flex items-center gap-1">
+            <span>+</span> 보기 추가
+          </button>
+        </div>
+        <div class="space-y-2">
+      `;
+
+      adminDraftOptions.forEach((opt, idx) => {
+        html += `
+          <div class="bg-slate-950 border ${opt.isCorrect ? "border-emerald-500/60" : "border-slate-700"} rounded-lg p-2.5 space-y-1.5">
+            <div class="flex items-center gap-2">
+              <input type="radio" name="correct-opt-radio" ${opt.isCorrect ? "checked" : ""} onchange="setDraftCorrectOption(${idx})" title="정답으로 지정" class="w-4 h-4 accent-emerald-500 cursor-pointer shrink-0" />
+              <span class="font-retro text-xs text-slate-400 shrink-0">#${idx + 1}</span>
+              <input type="text" value="${escapeHTML(opt.text)}" oninput="updateDraftOptionText(${idx}, this.value)" placeholder="보기 ${idx + 1} 내용 입력" class="flex-1 bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-white focus:border-amber-400 focus:outline-none" />
+              ${adminDraftOptions.length > 1 ? `<button type="button" onclick="removeDraftOption(${idx})" class="text-rose-400 hover:text-rose-300 text-xs font-bold px-1.5 cursor-pointer">✕</button>` : ""}
+            </div>
+            <div class="flex flex-wrap items-center gap-2 pl-6">
+              <input type="text" value="${escapeHTML(opt.img)}" oninput="updateDraftOptionImg(${idx}, this.value)" placeholder="보기 ${idx + 1} 이미지 URL (선택)" class="flex-1 min-w-[140px] bg-slate-900 border border-slate-800 rounded px-2 py-1 text-[11px] text-slate-300 focus:outline-none" />
+              <label class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-[10px] font-bold text-slate-200 cursor-pointer shrink-0">
+                🖼️ 사진
+                <input type="file" accept="image/*" onchange="handleOptionImageUpload(event, ${idx})" class="hidden" />
+              </label>
+              ${opt.img ? `<button type="button" onclick="updateDraftOptionImg(${idx}, ''); renderAdminOptionsEditor();" class="text-[10px] text-rose-400 cursor-pointer">삭제</button>` : ""}
+            </div>
+            ${opt.img ? `<img src="${escapeHTML(opt.img)}" class="ml-6 max-h-20 rounded border border-slate-700 object-contain" />` : ""}
+          </div>
+        `;
+      });
+
+      html += `</div>`;
+      container.innerHTML = html;
+    }
+
+    function addDraftOption() {
+      adminDraftOptions.push({ text: "", img: "", isCorrect: false });
+      renderAdminOptionsEditor();
+    }
+
+    function removeDraftOption(idx) {
+      const wasCorrect = adminDraftOptions[idx].isCorrect;
+      adminDraftOptions.splice(idx, 1);
+      if (wasCorrect && adminDraftOptions.length > 0) {
+        adminDraftOptions[0].isCorrect = true;
+      }
+      renderAdminOptionsEditor();
+    }
+
+    function setDraftCorrectOption(idx) {
+      adminDraftOptions.forEach((o, i) => o.isCorrect = (i === idx));
+      renderAdminOptionsEditor();
+    }
+
+    function updateDraftOptionText(idx, val) {
+      adminDraftOptions[idx].text = val;
+    }
+
+    function updateDraftOptionImg(idx, val) {
+      adminDraftOptions[idx].img = val;
+    }
+
+    // Image Upload Helper (resizes slightly if huge so localStorage stays healthy)
+    function compressAndReadImage(file, callback) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement("canvas");
+          const MAX_W = 640;
+          let w = img.width;
+          let h = img.height;
+          if (w > MAX_W) {
+            h = Math.round((h * MAX_W) / w);
+            w = MAX_W;
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, w, h);
+          callback(canvas.toDataURL("image/jpeg", 0.78));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleImageUpload(event, targetKey) {
+      const file = event.target.files[0];
+      if (!file) return;
+      compressAndReadImage(file, (dataUrl) => {
+        document.getElementById(`quiz-form-${targetKey}`).value = dataUrl;
+        previewFormImg(targetKey);
+      });
+    }
+
+    function handleOptionImageUpload(event, idx) {
+      const file = event.target.files[0];
+      if (!file) return;
+      compressAndReadImage(file, (dataUrl) => {
+        adminDraftOptions[idx].img = dataUrl;
+        renderAdminOptionsEditor();
+      });
+    }
+
+    function previewFormImg(targetKey) {
+      const val = document.getElementById(`quiz-form-${targetKey}`).value.trim();
+      const preview = document.getElementById(`preview-${targetKey}`);
+      if (val) {
+        preview.src = val;
+        preview.classList.remove("hidden");
+      } else {
+        preview.classList.add("hidden");
+      }
+    }
+
+    function clearFormImg(targetKey) {
+      document.getElementById(`quiz-form-${targetKey}`).value = "";
+      document.getElementById(`preview-${targetKey}`).classList.add("hidden");
+    }
+
+    function saveQuizFromForm() {
+      const editId = document.getElementById("edit-quiz-id").value;
+      const zoneId = document.getElementById("quiz-form-zone").value;
+      const type = document.getElementById("quiz-form-type").value;
+      const question = document.getElementById("quiz-form-question").value.trim();
+      const questionImg = document.getElementById("quiz-form-qimg").value.trim();
+      const explanation = document.getElementById("quiz-form-explanation").value.trim();
+      const explanationImg = document.getElementById("quiz-form-eimg").value.trim();
+
+      if (!zoneId) {
+        showToast("소속 탐험구역을 선택해주세요.", "rose");
+        return;
+      }
+      if (!question) {
+        showToast("문제 내용을 입력해주세요.", "rose");
+        return;
+      }
+
+      let options = [];
+      let correctIndex = 0;
+      let subjectiveAnswer = "";
+
+      if (type === "multiple") {
+        options = adminDraftOptions
+          .filter(o => o.text.trim() !== "" || o.img.trim() !== "")
+          .map(o => ({ text: o.text.trim() || "(이미지 보기)", img: o.img.trim() }));
+
+        if (options.length === 0) {
+          showToast("최소 1개 이상의 보기를 입력해주세요.", "rose");
+          return;
+        }
+        const foundCorrect = adminDraftOptions.findIndex(o => o.isCorrect);
+        correctIndex = foundCorrect >= 0 && foundCorrect < options.length ? foundCorrect : 0;
+      } else {
+        subjectiveAnswer = (document.getElementById("quiz-form-subj-ans")?.value || "").trim();
+        if (!subjectiveAnswer) {
+          showToast("주관식 정답을 입력해주세요.", "rose");
+          return;
+        }
+      }
+
+      const quizObj = {
+        id: editId || "q_" + Date.now(),
+        zoneId,
+        type,
+        question,
+        questionImg,
+        options,
+        correctIndex,
+        subjectiveAnswer,
+        explanation,
+        explanationImg
+      };
+
+      if (editId) {
+        const idx = quizData.quizzes.findIndex(q => q.id === editId);
+        if (idx !== -1) quizData.quizzes[idx] = quizObj;
+        showToast("✅ 퀴즈가 수정되었습니다!", "emerald");
+      } else {
+        quizData.quizzes.push(quizObj);
+        showToast("✅ 새 퀴즈가 등록되었습니다!", "emerald");
+      }
+
+      saveQuizData();
+      resetQuizForm();
+      renderAdminZones();
+      renderAdminQuizList();
+      renderHomeScreen();
+    }
+
+    function renderAdminQuizList() {
+      const filterZoneId = document.getElementById("admin-filter-zone").value;
+      const listEl = document.getElementById("admin-quiz-list");
+
+      const filtered = filterZoneId === "all"
+        ? quizData.quizzes
+        : quizData.quizzes.filter(q => q.zoneId === filterZoneId);
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="text-center text-xs text-slate-500 py-4">등록된 퀴즈가 없습니다.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map((q, idx) => {
+        const z = quizData.zones.find(zone => zone.id === q.zoneId);
+        const zName = z ? z.name : "미분류";
+        const ansPreview = q.type === "multiple"
+          ? (q.options[q.correctIndex]?.text || "")
+          : q.subjectiveAnswer;
+
+        return `
+          <div class="bg-slate-950 border border-slate-700/90 rounded-lg p-3 flex items-start justify-between gap-3">
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-center gap-1.5 mb-1">
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">${escapeHTML(zName)}</span>
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">${q.type === "multiple" ? `객관식(${q.options.length}지선다)` : "주관식"}</span>
+                ${q.questionImg ? `<span class="text-[10px] text-sky-400">🖼️문제사진</span>` : ""}
+              </div>
+              <div class="text-xs sm:text-sm font-bold text-white truncate">${idx + 1}. ${escapeHTML(q.question)}</div>
+              <div class="text-[11px] text-emerald-400 mt-0.5 truncate">정답: ${escapeHTML(ansPreview)}</div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button onclick="editQuiz('${q.id}')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-bold cursor-pointer">수정</button>
+              <button onclick="deleteQuiz('${q.id}')" class="px-2.5 py-1 rounded bg-rose-950 hover:bg-rose-800 text-rose-300 text-xs font-bold cursor-pointer">삭제</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function editQuiz(quizId) {
+      const q = quizData.quizzes.find(item => item.id === quizId);
+      if (!q) return;
+
+      document.getElementById("edit-quiz-id").value = q.id;
+      document.getElementById("quiz-form-title").textContent = "✏️ 퀴즈 수정 모드";
+      document.getElementById("cancel-edit-btn").classList.remove("hidden");
+      document.getElementById("quiz-form-zone").value = q.zoneId;
+      document.getElementById("quiz-form-type").value = q.type;
+      document.getElementById("quiz-form-question").value = q.question;
+      document.getElementById("quiz-form-qimg").value = q.questionImg || "";
+      previewFormImg("qimg");
+
+      document.getElementById("quiz-form-explanation").value = q.explanation || "";
+      document.getElementById("quiz-form-eimg").value = q.explanationImg || "";
+      previewFormImg("eimg");
+
+      if (q.type === "multiple") {
+        adminDraftOptions = q.options.map((o, idx) => ({
+          text: o.text,
+          img: o.img || "",
+          isCorrect: idx === q.correctIndex
+        }));
+        if (adminDraftOptions.length === 0) {
+          adminDraftOptions = [{ text: "", img: "", isCorrect: true }];
+        }
+        renderAdminOptionsEditor();
+      } else {
+        renderAdminOptionsEditor();
+        document.getElementById("quiz-form-subj-ans").value = q.subjectiveAnswer || "";
+      }
+
+      document.getElementById("quiz-form-title").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function deleteQuiz(quizId) {
+      quizData.quizzes = quizData.quizzes.filter(q => q.id !== quizId);
+      saveQuizData();
+      renderAdminZones();
+      renderAdminQuizList();
+      renderHomeScreen();
+      showToast("퀴즈가 삭제되었습니다.", "amber");
+    }
+
+    // JSON Export / Import for GitHub Pages Repository Sync
+    function exportQuizJSON() {
+      const dataStr = JSON.stringify(quizData, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "dungeon_quiz_data.json";
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("📤 퀴즈 JSON 파일이 다운로드되었습니다!", "emerald");
+    }
+
+    function importQuizJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && Array.isArray(parsed.zones) && Array.isArray(parsed.quizzes)) {
+            quizData = parsed;
+            saveQuizData();
+            renderAdminZones();
+            renderAdminQuizList();
+            renderHomeScreen();
+            showToast("📥 퀴즈 데이터를 성공적으로 불러왔습니다!", "emerald");
+          } else {
+            showToast("올바른 퀴즈 JSON 파일 형식이 아닙니다.", "rose");
+          }
+        } catch (err) {
+          showToast("JSON 파일을 읽는 중 오류가 발생했습니다.", "rose");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // ==========================================
+    // 11. UTILITIES (TOAST & HTML ESCAPING)
+    // ==========================================
+    function showToast(message, color = "amber") {
+      const container = document.getElementById("toast-container");
+      const toast = document.createElement("div");
+
+      const colorClasses = {
+        amber: "bg-slate-900/95 border-amber-400 text-amber-200",
+        emerald: "bg-slate-900/95 border-emerald-400 text-emerald-200",
+        rose: "bg-slate-900/95 border-rose-500 text-rose-200"
+      };
+
+      toast.className = `border ${colorClasses[color] || colorClasses.amber} px-4 py-2.5 rounded-xl shadow-2xl text-xs sm:text-sm font-bold text-center transition-all duration-300 transform translate-y-0 opacity-100`;
+      toast.textContent = message;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add("opacity-0", "-translate-y-2");
+        setTimeout(() => toast.remove(), 300);
+      }, 2600);
+    }
+
+    function escapeHTML(str) {
+      if (typeof str !== "string") return "";
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Boot Application
+    window.onload = function() {
+      loadAllData();
+    };
+  </script>
 </body>
 </html>
